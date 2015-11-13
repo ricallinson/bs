@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 // Token represents a lexical token.
@@ -86,6 +86,16 @@ func Lookup(ident string) Token {
 	return IDENT
 }
 
+func Find(t Token, n NodeI) bool {
+	for n.Token() != 0 {
+		if n.Token() == t {
+			return true
+		}
+		n = n.Prev()
+	}
+	return false
+}
+
 type NodeI interface {
 	Ident(...string) string
 	Token(...Token) Token
@@ -135,7 +145,7 @@ func (this *Node) String() string {
 	case EQ:
 		str = "="
 	case ADD:
-		if this.Prev().Token() != STRING {
+		if this.Prev().Token() != STRING && this.Prev().Token() != IDENT {
 			str = " + "
 		}
 	case SUB:
@@ -144,6 +154,8 @@ func (this *Node) String() string {
 		str = " * "
 	case DIV:
 		str = " / "
+	case RETURN:
+		str = "\"echo\" \"-ne\" "
 	}
 	return str + this.Next().String()
 }
@@ -154,10 +166,13 @@ type Block struct {
 }
 
 func (this Block) String() string {
-	str := " {"
+	str := " {\n"
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	for _, b := range this.next {
 		str += b.String()
+	}
+	if Find(FUNCTION, this) {
+		str += "return\n"
 	}
 	return str + "}\n"
 }
@@ -230,13 +245,15 @@ type Integer struct {
 func (this Integer) String() string {
 	str := ""
 	switch this.Prev().Token() {
-	case EOL, EQ:
+	case ADD, SUB, DIV, MUL:
+	default:
 		str = "$(("
 	}
 	i, _ := strconv.Atoi(this.Ident())
 	str += fmt.Sprintf("%d", i)
 	switch this.Next().Token() {
-	case EOL:
+	case ADD, SUB, DIV, MUL:
+	default:
 		str += "))"
 	}
 	return str + this.Next().String()

@@ -3,6 +3,7 @@ package main
 import (
 	// "fmt"
 	"io"
+	"strings"
 )
 
 // Parser represents a parser.
@@ -20,10 +21,33 @@ func NewParser(r io.Reader) *Parser {
 	return &Parser{s: NewScanner(r)}
 }
 
-// Parse parses a scripter string and returns a slice of statment AST objects.
-func (this *Parser) Parse(prev NodeI) ([]NodeI, error) {
-	var nodes = []NodeI{}
+// NewStringParser returns a new instance of Parser.
+func NewParserFromString(in string) *Parser {
+	return NewParser(strings.NewReader(in))
+}
 
+func ParseString(in string) string {
+	p := NewParserFromString(in)
+	s, e := p.Parse()
+	if e != nil {
+		panic(e)
+	}
+	var str string
+	for _, l := range s {
+		str += l.String()
+	}
+	return str
+}
+
+// Parse parses a scripter string and returns a slice of statment AST objects.
+func (this *Parser) Parse(n ...NodeI) ([]NodeI, error) {
+	var prev NodeI
+	if len(n) == 1 {
+		prev = n[0]
+	} else {
+		prev = &Node{}
+	}
+	var nodes = []NodeI{}
 	for {
 		if tok, _ := this.scanIgnoreWhitespace(); tok == EOF || tok == RBRACE {
 			return nodes, nil
@@ -40,12 +64,12 @@ func (this *Parser) Parse(prev NodeI) ([]NodeI, error) {
 
 // Parse parses a statement.
 func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
-    var curr NodeI
+	var curr NodeI
 	tok, lit := this.scanIgnoreWhitespace()
 	if tok == EOL || tok == EOF {
 		curr = &EndOf{&Node{}}
-        curr.Token(tok)
-        return curr, nil
+		curr.Token(tok)
+		return curr, nil
 	}
 
 	switch tok {
@@ -64,7 +88,7 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 	case LBRACE:
 		block, _ := this.Parse(prev)
 		b := &Block{&Node{}, block}
-        curr = b
+		curr = b
 	default:
 		curr = &Node{}
 	}
