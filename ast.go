@@ -169,6 +169,7 @@ func (this *Node) String() string {
 	case RSQUARE:
 		str = ")"
 	}
+	fmt.Println(this.Token(), this.Ident())
 	return str + this.Next().String()
 }
 
@@ -179,6 +180,27 @@ type Block struct {
 
 func (this Block) String() string {
 	str := " {"
+	// Search the block for varibales and then check if they should be local.
+	for _, b := range this.next {
+		if b.Token() == IDENT {
+			str += "\nlocal " + b.Ident()
+			// // Look back to see if this is a variable has been declared already.
+			// // If not then make it a local variable.
+			// var curr NodeI
+			// curr = this.Prev()
+			// for curr.Token() != 0 {
+			// 	if curr.Ident() == this.Ident() {
+			// 		// If they match then the variable has been declared already.
+			// 		break
+			// 	}
+			// 	curr = curr.Prev()
+			// }
+			// if curr.Token() == 0 {
+			// 	// If curr is nil then the varible was not declared so make it loacl.
+			// 	str = "local " + str + "\n" + str
+			// }
+		}
+	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := Find(FUNCTION, this, PREV); n != nil {
 		n = n.Next().Next().Next() // function->foo->(
