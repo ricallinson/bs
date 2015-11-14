@@ -101,6 +101,9 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 		} else {
 			n = n.Prev()
 		}
+		if n == nil {
+			return nil
+		}
 	}
 	return nil
 }
@@ -242,10 +245,10 @@ type Variable struct {
 }
 
 func (this *Variable) String() string {
-	// Check back to see if we are in a function, if we are do not print any vars.
 	str := ""
+	// Check to see if we are in a function, if we are do not print any vars.
 	if Find(FUNCTION, this, PREV) != nil && Find(LPAREN, this, PREV) != nil && Find(RPAREN, this, NEXT) != nil {
-		return str + this.Next().String()
+		return this.Next().String()
 	}
 	switch this.Prev().Token() {
 	case 0, EOL:
@@ -255,8 +258,13 @@ func (this *Variable) String() string {
 		// If the parent is a function then this is a function name not a var.
 		str = this.Ident()
 	default:
-		// Otherwise assume the var needs to be wrapped.
-		str = fmt.Sprintf("\"$%s\"", this.Ident())
+		// Are there any operators that makes this var a number?
+		if Find(SUB, this, NEXT) != nil || Find(MUL, this, NEXT) != nil || Find(DIV, this, NEXT) != nil {
+			str = fmt.Sprintf("$(($%s", this.Ident())
+		} else {
+			// Otherwise assume the var needs to be wrapped.
+			str = fmt.Sprintf("\"$%s\"", this.Ident())
+		}
 	}
 	return str + this.Next().String()
 }
