@@ -10,52 +10,52 @@ import (
 type Token int
 
 const (
-	PREV = false
-	NEXT = true
-	ILLEGAL Token = iota
-	EOF           // end of file
-	EOL           // end of line
-	WS            // whitespace
-	IDENT        //
-	NUMBER       // 12345.67
-	FUNCTION     // func
-	RETURN       // return
-	WHILE        // while
-	IF           // if
-	ELSE         // else
-	TRUE         // true
-	FALSE        // false
-	DURATION_VAL // 13h
-	STRING       // "abc"
-	BADSTRING    // "abc
-	BADESCAPE    // \q
-	REGEX        // Regular expressions
-	BADREGEX     // `.*
-	PRINTLN // println
-	ADD // +
-	SUB // -
-	MUL // *
-	DIV // /
-	AND // AND
-	OR  // OR
-	EQ       // =
-	NEQ      // !=
-	EQREGEX  // =~
-	NEQREGEX // !~
-	LT       // <
-	LTE      // <=
-	GT       // >
-	GTE      // >=
-	LSQUARE   // [
-	RSQUARE   // ]
-	LPAREN    // (
-	RPAREN    // )
-	LBRACE    // {
-	RBRACE    // }
-	COMMA     // ,
-	COLON     // :
-	SEMICOLON // ;
-	DOT       // .
+	PREV               = false
+	NEXT               = true
+	ILLEGAL      Token = iota
+	EOF                // end of file
+	EOL                // end of line
+	WS                 // whitespace
+	IDENT              //
+	NUMBER             // 12345.67
+	FUNCTION           // func
+	RETURN             // return
+	WHILE              // while
+	IF                 // if
+	ELSE               // else
+	TRUE               // true
+	FALSE              // false
+	DURATION_VAL       // 13h
+	STRING             // "abc"
+	BADSTRING          // "abc
+	BADESCAPE          // \q
+	REGEX              // Regular expressions
+	BADREGEX           // `.*
+	PRINTLN            // println
+	ADD                // +
+	SUB                // -
+	MUL                // *
+	DIV                // /
+	AND                // AND
+	OR                 // OR
+	EQ                 // =
+	NEQ                // !=
+	EQREGEX            // =~
+	NEQREGEX           // !~
+	LT                 // <
+	LTE                // <=
+	GT                 // >
+	GTE                // >=
+	LSQUARE            // [
+	RSQUARE            // ]
+	LPAREN             // (
+	RPAREN             // )
+	LBRACE             // {
+	RBRACE             // }
+	COMMA              // ,
+	COLON              // :
+	SEMICOLON          // ;
+	DOT                // .
 )
 
 var keywords map[string]Token
@@ -169,7 +169,6 @@ func (this *Node) String() string {
 	case RSQUARE:
 		str = ")"
 	}
-	fmt.Println(this.Token(), this.Ident())
 	return str + this.Next().String()
 }
 
@@ -184,21 +183,6 @@ func (this Block) String() string {
 	for _, b := range this.next {
 		if b.Token() == IDENT {
 			str += "\nlocal " + b.Ident()
-			// // Look back to see if this is a variable has been declared already.
-			// // If not then make it a local variable.
-			// var curr NodeI
-			// curr = this.Prev()
-			// for curr.Token() != 0 {
-			// 	if curr.Ident() == this.Ident() {
-			// 		// If they match then the variable has been declared already.
-			// 		break
-			// 	}
-			// 	curr = curr.Prev()
-			// }
-			// if curr.Token() == 0 {
-			// 	// If curr is nil then the varible was not declared so make it loacl.
-			// 	str = "local " + str + "\n" + str
-			// }
 		}
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
@@ -267,7 +251,12 @@ func (this *Variable) String() string {
 	switch this.Prev().Token() {
 	case 0, LBRACE, EOL:
 		// If there is no parent or EOL then this must be the first var to be assigned.
-		str = this.Ident()
+		// Check if this variable is a function.
+		if false {
+			str = fmt.Sprintf("\"%s\" ", this.Ident())
+		} else {
+			str = this.Ident()
+		}
 	case FUNCTION:
 		// If the parent is a function then this is a function name not a var.
 		str = this.Ident()

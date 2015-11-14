@@ -24,7 +24,8 @@ func NewParser(r io.Reader) *Parser {
 
 // NewStringParser returns a new instance of Parser.
 func NewParserFromString(in string) *Parser {
-	return NewParser(strings.NewReader(in))
+	p := NewParser(strings.NewReader(in))
+	return p
 }
 
 func ParseString(in string) string {
@@ -35,7 +36,8 @@ func ParseString(in string) string {
 // NewStringParser returns a new instance of Parser.
 func NewParserFromFile(path string) *Parser {
 	r, _ := os.Open(path)
-	return NewParser(r)
+	p := NewParser(r)
+	return p
 }
 
 func ParseFile(path string) string {
@@ -120,6 +122,13 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 	curr.Token(tok)
 	curr.Prev(prev)
 	curr.Next(next)
+
+	// if curr.Token() == FUNCTION {
+	// 	if ok, _ := funcs[next.Ident()]; ok {
+	// 		panic("function " + next.Ident() + " already defined")
+	// 	}
+	// 	funcs[next.Ident()] = true
+	// }
 
 	return curr, nil
 }

@@ -21,6 +21,7 @@ return
 }
 ===
 v1 = "Global V1"
+v2 = "Global V2"
 func foo(p) {
     v1 = "Local " + p
     v2 = "V3 Modified."
@@ -28,6 +29,7 @@ func foo(p) {
 foo("Var")
 ---
 v1="Global V1"
+v2="Global V2"
 function foo {
 local v1
 local v2
@@ -35,5 +37,6 @@ local p
 p="$1"
 v1="Local ""$p"
 v2="V3 Modified."
+return
 }
 "foo" "Var"
