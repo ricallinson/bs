@@ -100,6 +100,10 @@ func (s *Scanner) Scan() (tok Token, pos Pos, lit string) {
 		return LPAREN, pos, ""
 	case ')':
 		return RPAREN, pos, ""
+	case '[':
+		return LSQUARE, pos, ""
+	case ']':
+		return RSQUARE, pos, ""
 	case '{':
 		return LBRACE, pos, ""
 	case '}':

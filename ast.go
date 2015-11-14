@@ -56,6 +56,8 @@ const (
 	GT       // >
 	GTE      // >=
 
+	LSQUARE   // [
+	RSQUARE   // ]
 	LPAREN    // (
 	RPAREN    // )
 	LBRACE    // {
@@ -163,6 +165,16 @@ func (this *Node) String() string {
 		str = " / "
 	case RETURN:
 		str = "\"echo\" \"-ne\" "
+	case TRUE:
+		str = "$((1))"
+	case FALSE:
+		str = "$((0))"
+	case COMMA:
+		str = " "
+	case LSQUARE:
+		str = "("
+	case RSQUARE:
+		str = ")"
 	}
 	return str + this.Next().String()
 }
