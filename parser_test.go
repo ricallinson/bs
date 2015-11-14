@@ -30,18 +30,5 @@ func TestApplication(t *testing.T) {
 		}
 	})
 
-	Describe("String", func() {
-
-		It("should return assignment of string", func() {
-			s := ParseString("a = \"foo\"")
-			AssertEqual(s, "a=\"foo\"\n")
-		})
-
-		It("should return assignment of strings", func() {
-			s := ParseString("a = \"foo\" + \"bar\"")
-			AssertEqual(s, "a=\"foo\"\"bar\"\n")
-		})
-	})
-
 	Report(t)
 }
