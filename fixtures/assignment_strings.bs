@@ -2,6 +2,6 @@ a = "foo"
 ---
 a="foo"
 ===
-a = "foo + "bar"
+a = "foo" + "bar"
 ---
 a="foo""bar"
