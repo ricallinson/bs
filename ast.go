@@ -222,6 +222,14 @@ func (this *Function) String() string {
 	return "function " + this.Next().String()
 }
 
+type FunctionName struct {
+	*Node
+}
+
+func (this *FunctionName) String() string {
+	return "\"" + this.Ident() + "\" " + this.Next().String()
+}
+
 type If struct {
 	*Node
 }

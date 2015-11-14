@@ -15,6 +15,7 @@ type Parser struct {
 		lit string // last read literal
 		n   int    // buffer size (max=1)
 	}
+	funcs map[string]bool
 }
 
 // NewParser returns a new instance of Parser.
@@ -25,6 +26,7 @@ func NewParser(r io.Reader) *Parser {
 // NewStringParser returns a new instance of Parser.
 func NewParserFromString(in string) *Parser {
 	p := NewParser(strings.NewReader(in))
+	p.funcs = map[string]bool{}
 	return p
 }
 
@@ -37,6 +39,7 @@ func ParseString(in string) string {
 func NewParserFromFile(path string) *Parser {
 	r, _ := os.Open(path)
 	p := NewParser(r)
+	p.funcs = map[string]bool{}
 	return p
 }
 
@@ -93,6 +96,10 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 	switch tok {
 	case IDENT:
 		curr = &Variable{&Node{}}
+		// Check if the ident is a function, if so return a function name.
+		if ok, _ := this.funcs[lit]; ok {
+			curr = &FunctionName{&Node{}}
+		}
 	case NUMBER:
 		curr = &Integer{&Node{}}
 	case STRING:
@@ -123,12 +130,12 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 	curr.Prev(prev)
 	curr.Next(next)
 
-	// if curr.Token() == FUNCTION {
-	// 	if ok, _ := funcs[next.Ident()]; ok {
-	// 		panic("function " + next.Ident() + " already defined")
-	// 	}
-	// 	funcs[next.Ident()] = true
-	// }
+	if curr.Token() == FUNCTION {
+		if ok, _ := this.funcs[next.Ident()]; ok {
+			panic("function " + next.Ident() + " already defined")
+		}
+		this.funcs[next.Ident()] = true
+	}
 
 	return curr, nil
 }
