@@ -243,7 +243,7 @@ func (this *Variable) String() string {
 		return this.Next().String()
 	}
 	switch this.Prev().Token() {
-	case 0, EOL:
+	case 0, LBRACE, EOL:
 		// If there is no parent or EOL then this must be the first var to be assigned.
 		str = this.Ident()
 	case FUNCTION:

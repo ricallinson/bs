@@ -102,8 +102,9 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 	case ELSE:
 		curr = &Else{&Node{}}
 	case LBRACE:
-		// we don't pass curr here as blocks are self contained.
-		block, _ := this.Parse(&Node{})
+		// We create a node here to represent the block.
+		node := &Node{"{", LBRACE, prev, nil}
+		block, _ := this.Parse(node)
 		b := &Block{&Node{}, block}
 		curr = b
 	default:
