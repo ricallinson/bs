@@ -3,6 +3,7 @@ package main
 import (
 	. "github.com/ricallinson/simplebdd"
 	"testing"
+	"io/ioutil"
 )
 
 func TestApplication(t *testing.T) {
@@ -63,14 +64,16 @@ func TestApplication(t *testing.T) {
 
 	Describe("Function", func() {
 
-		It("should return simple function", func() {
-			s := ParseString("func foo () {return 1}")
-			AssertEqual(s, "function foo {\n\"echo\" \"-ne\" $((1))\nreturn\n}\n")
+		It("should test func_001", func() {
+			s := ParseFile("./fixtures/func_001.go")
+			t, _ := ioutil.ReadFile("./fixtures/func_001.bash")
+			AssertEqual(s, string(t))
 		})
 
-		It("should return simple function with parameters", func() {
-			s := ParseString("func foo (a b) {return 1}")
-			AssertEqual(s, "function foo {\n\"echo\" \"-ne\" $((1))\nreturn\n}\n")
+		It("should test func_002", func() {
+			s := ParseFile("./fixtures/func_002.go")
+			t, _ := ioutil.ReadFile("./fixtures/func_002.bash")
+			AssertEqual(s, string(t))
 		})
 	})
 

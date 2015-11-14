@@ -3,6 +3,7 @@ package main
 import (
 	// "fmt"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -28,7 +29,22 @@ func NewParserFromString(in string) *Parser {
 
 func ParseString(in string) string {
 	p := NewParserFromString(in)
-	s, e := p.Parse()
+	return p.ParseToString()
+}
+
+// NewStringParser returns a new instance of Parser.
+func NewParserFromFile(path string) *Parser {
+	r, _ := os.Open(path)
+	return NewParser(r)
+}
+
+func ParseFile(path string) string {
+	p := NewParserFromFile(path)
+	return p.ParseToString()
+}
+
+func (this *Parser) ParseToString() string {
+	s, e := this.Parse()
 	if e != nil {
 		panic(e)
 	}

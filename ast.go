@@ -10,6 +10,8 @@ import (
 type Token int
 
 const (
+	PREV = false
+	NEXT = true
 	// Special tokens
 	ILLEGAL Token = iota
 	EOF           // end of file
@@ -86,14 +88,19 @@ func Lookup(ident string) Token {
 	return IDENT
 }
 
-func Find(t Token, n NodeI) bool {
+// true = Next, false = Prev
+func Find(t Token, n NodeI, dir bool) NodeI {
 	for n.Token() != 0 {
 		if n.Token() == t {
-			return true
+			return n
 		}
-		n = n.Prev()
+		if dir {
+			n = n.Next()
+		} else {
+			n = n.Prev()
+		}
 	}
-	return false
+	return nil
 }
 
 type NodeI interface {
@@ -166,12 +173,21 @@ type Block struct {
 }
 
 func (this Block) String() string {
-	str := " {\n"
+	str := " {"
+	if n := Find(FUNCTION, this, PREV); n != nil {
+		n = n.Next().Next().Next() // function->foo->(
+		i := 1
+		for n.Token() != RPAREN {
+			str += fmt.Sprintf("\nlocal %s\n%s=$%d", n.Ident(), n.Ident(), i)
+			n = n.Next()
+			i++
+		}
+	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	for _, b := range this.next {
-		str += b.String()
+		str += "" + b.String()
 	}
-	if Find(FUNCTION, this) {
+	if Find(FUNCTION, this, PREV) != nil {
 		str += "return\n"
 	}
 	return str + "}\n"
@@ -216,6 +232,9 @@ type Variable struct {
 func (this *Variable) String() string {
 	// Check back to see if we are in a function, if we are do not print any vars.
 	str := ""
+	if Find(FUNCTION, this, PREV) != nil && Find(LPAREN, this, PREV) != nil && Find(RPAREN, this, NEXT) != nil {
+		return str + this.Next().String()
+	}
 	switch this.Prev().Token() {
 	case 0, EOL:
 		// If there is no parent or EOL then this must be the first var to be assigned.
