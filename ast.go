@@ -230,6 +230,14 @@ func (this *FunctionName) String() string {
 	return "\"" + this.Ident() + "\" " + this.Next().String()
 }
 
+type While struct {
+	*Node
+}
+
+func (this While) String() string {
+	return "while " + this.Next().String()
+}
+
 type If struct {
 	*Node
 }

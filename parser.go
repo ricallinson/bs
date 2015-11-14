@@ -116,6 +116,8 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 		block, _ := this.Parse(node)
 		b := &Block{&Node{}, block}
 		curr = b
+	case WHILE:
+		curr = &While{&Node{}}
 	default:
 		curr = &Node{}
 	}
