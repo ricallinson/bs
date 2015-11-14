@@ -12,13 +12,10 @@ type Token int
 const (
 	PREV = false
 	NEXT = true
-	// Special tokens
 	ILLEGAL Token = iota
 	EOF           // end of file
 	EOL           // end of line
 	WS            // whitespace
-
-	// Literals
 	IDENT        //
 	NUMBER       // 12345.67
 	FUNCTION     // func
@@ -34,19 +31,13 @@ const (
 	BADESCAPE    // \q
 	REGEX        // Regular expressions
 	BADREGEX     // `.*
-
-	// Built ins
 	PRINTLN // println
-
-	// Operators
 	ADD // +
 	SUB // -
 	MUL // *
 	DIV // /
-
 	AND // AND
 	OR  // OR
-
 	EQ       // =
 	NEQ      // !=
 	EQREGEX  // =~
@@ -55,7 +46,6 @@ const (
 	LTE      // <=
 	GT       // >
 	GTE      // >=
-
 	LSQUARE   // [
 	RSQUARE   // ]
 	LPAREN    // (
@@ -189,19 +179,21 @@ type Block struct {
 
 func (this Block) String() string {
 	str := " {"
+	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := Find(FUNCTION, this, PREV); n != nil {
 		n = n.Next().Next().Next() // function->foo->(
 		i := 1
 		for n.Token() != RPAREN {
-			str += fmt.Sprintf("\nlocal %s\n%s=$%d", n.Ident(), n.Ident(), i)
+			str += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", n.Ident(), n.Ident(), i)
 			n = n.Next()
 			i++
 		}
 	}
-	// Check back to see if we are in a function, if we are then print out the function arguments here.
+	// Print the statments in the block.
 	for _, b := range this.next {
 		str += "" + b.String()
 	}
+	// If we are at the end of a function then print return.
 	if Find(FUNCTION, this, PREV) != nil {
 		str += "return\n"
 	}
