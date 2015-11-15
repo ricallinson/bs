@@ -1,0 +1,10 @@
+output = ls()
+ex = exists("file.txt")
+---
+output=$("ls")
+[ -e "file.txt" ]
+ex=$((!$?))
+===
+println("foo")
+---
+"echo" "-e" "foo"

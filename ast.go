@@ -31,7 +31,6 @@ const (
 	BADESCAPE          // \q
 	REGEX              // Regular expressions
 	BADREGEX           // `.*
-	PRINTLN            // println
 	ADD                // +
 	SUB                // -
 	MUL                // *
@@ -56,6 +55,10 @@ const (
 	COLON              // :
 	SEMICOLON          // ;
 	DOT                // .
+	PRINTLN            // println
+	LS                 // ls
+	EXISTS             // exists
+	CONCAT             // concat
 )
 
 var keywords map[string]Token
@@ -68,8 +71,12 @@ func init() {
 	keywords["else"] = ELSE
 	keywords["true"] = TRUE
 	keywords["false"] = FALSE
-	keywords["println"] = PRINTLN
 	keywords["return"] = RETURN
+	// Built-ins
+	keywords["println"] = PRINTLN
+	keywords["ls"] = LS
+	keywords["exists"] = EXISTS
+	keywords["concat"] = CONCAT
 }
 
 // Lookup returns the token associated with a given string.
@@ -98,7 +105,11 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 	return nil
 }
 
-func InConstruct(node NodeI) bool {
+func IsConstruct(node NodeI) bool {
+	// If there is a left brace then we are in the construct.
+	if Find(LBRACE, node, PREV) != nil {
+		return false
+	}
 	if (Find(FUNCTION, node, PREV) != nil || Find(WHILE, node, PREV) != nil) && Find(LPAREN, node, PREV) != nil && Find(RPAREN, node, NEXT) != nil {
 		return true
 	}
@@ -158,7 +169,7 @@ func (this *Node) Next(v ...NodeI) NodeI {
 
 func (this *Node) String() string {
 	// Check to see if we are in a construct, if we are do not print any vars.
-	if InConstruct(this) {
+	if IsConstruct(this) {
 		return this.Next().String()
 	}
 	str := ""
@@ -166,9 +177,7 @@ func (this *Node) String() string {
 	case EQ:
 		str = "="
 	case ADD:
-		if this.Prev().Token() != STRING && this.Prev().Token() != IDENT {
-			str = " + "
-		}
+		str = " + "
 	case SUB:
 		str = " - "
 	case MUL:
@@ -190,11 +199,18 @@ func (this *Node) String() string {
 	case FALSE:
 		str = "$((0))"
 	case COMMA:
-		str = " "
+		if Find(LSQUARE, this, PREV) != nil {
+			// If we are in a list then add a space.
+			str = " "
+		}
 	case LSQUARE:
 		str = "("
 	case RSQUARE:
 		str = ")"
+	case LS:
+		str = "$(\"ls\")"
+	case PRINTLN:
+		str = "\"echo\" \"-e\" "
 	}
 	return str + this.Next().String()
 }
@@ -211,7 +227,7 @@ func (this Block) String() string {
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := Find(FUNCTION, this, PREV); n != nil {
-		// Search the block for varibales and then check if they should be local.
+		// Search the block for variables and then check if they should be local.
 		for _, b := range this.next {
 			if b.Token() == IDENT {
 				str += "\nlocal " + b.Ident()
@@ -220,19 +236,23 @@ func (this Block) String() string {
 		n = n.Next().Next().Next() // function->foo->(
 		i := 1
 		for n.Token() != RPAREN {
-			str += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", n.Ident(), n.Ident(), i)
+			if n.Token() == IDENT {
+				str += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", n.Ident(), n.Ident(), i)
+				i++
+			}
 			n = n.Next()
-			i++
 		}
 	}
-	// Print the statments in the block.
+	// Print each statement in the block.
 	for _, b := range this.next {
 		str += "" + b.String()
 	}
-	// If we are at the end of a function then print return.
+	// Check to see what type of block we are in.
 	if Find(FUNCTION, this, PREV) != nil {
+		// If we are at the end of a function then print return.
 		str += "return\n}\n"
 	} else if Find(WHILE, this, PREV) != nil {
+		// If we are at the end of a while block then print done.
 		str += "done\n"
 	}
 	return str
@@ -313,26 +333,31 @@ type Variable struct {
 
 func (this *Variable) String() string {
 	// Check to see if we are in a construct, if we are do not print any vars.
-	if InConstruct(this) {
+	if IsConstruct(this) {
 		return this.Next().String()
 	}
-	str := ""
+	var str string
+	// Are we in an exists function call, if so do something special.
+	if Find(EXISTS, this, NEXT) != nil { // a=exists("str")
+		str = "[ -e \"file.txt\" ]\n" + this.Ident() + "=$((!$?))"
+		return str + this.Next().Next().Next().Next().Next().String()
+	}
+	// If we got here then then it is a normal variable so check the previous token to see whats going on.
 	switch this.Prev().Token() {
 	case 0, LBRACE, EOL:
-		// If there is no parent or EOL then this must be the first var to be assigned.
-		// Check if this variable is a function.
-		if false {
-			str = fmt.Sprintf("\"%s\" ", this.Ident())
-		} else {
-			str = this.Ident()
-		}
+		// If there is no parent, a { or an EOL then this must be the first var to be assigned.
+		str = this.Ident()
 	case FUNCTION:
-		// If the parent is a function then this is a function name not a var.
+		// If the parent is a function then this is a function name not a variable.
 		str = this.Ident()
 	default:
-		// Are there any operators that makes this var a number?
-		if Find(SUB, this, NEXT) != nil || Find(MUL, this, NEXT) != nil || Find(DIV, this, NEXT) != nil {
+		// Are there any operators that makes this variable a number?
+		if IsArithmetic(this.Prev()) == false && IsArithmetic(this.Next()) {
 			str = fmt.Sprintf("$(($%s", this.Ident())
+		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) == false {
+			str = fmt.Sprintf("$%s))", this.Ident())
+		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) {
+			str = fmt.Sprintf("$%s", this.Ident())
 		} else {
 			// Otherwise assume the var needs to be wrapped.
 			str = fmt.Sprintf("\"$%s\"", this.Ident())
@@ -355,7 +380,7 @@ type Integer struct {
 
 func (this Integer) String() string {
 	// Check to see if we are in a construct, if we are do not print any vars.
-	if InConstruct(this) {
+	if IsConstruct(this) {
 		return this.Next().String()
 	}
 	str := ""

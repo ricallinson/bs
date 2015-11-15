@@ -1,9 +1,9 @@
 a = 1 + 2
 b = a * 7
-c = "Con" + "cat"
+c = concat("Con", "cat")
 d = c + b
 ---
 a=$((1 + 2))
 b=$(($a * 7))
 c="Con""cat"
-d="$c""$b"
+d=$(($c + $b))

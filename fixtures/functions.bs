@@ -7,7 +7,7 @@ function foo {
 return
 }
 ===
-func foo (a b) {
+func foo (a, b) {
     return 1
 }
 ---
@@ -23,7 +23,7 @@ return
 v1 = "Global V1"
 v2 = "Global V2"
 func foo(p) {
-    v1 = "Local " + p
+    v1 = concat("Local ", p)
     v2 = "V3 Modified."
 }
 foo("Var")
