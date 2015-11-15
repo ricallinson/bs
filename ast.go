@@ -371,7 +371,10 @@ type Else struct {
 }
 
 func (this Else) String() (string, NodeI) {
-	return "else\n", this.Next()
+	if this.Next().Token() == IF {
+		return "else\n", this.Next()
+	}
+	return "else", this.Next()
 }
 
 type Variable struct {
