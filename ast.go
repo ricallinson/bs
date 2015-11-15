@@ -121,22 +121,6 @@ func GetMyFunction(n NodeI) NodeI {
 	return nil
 }
 
-func WasReturn(n NodeI) bool {
-	for n.Token() != ILLEGAL {
-		if n.Token() == FUNCTION || n.Token() == IF || n.Token() == WHILE {
-			return false
-		} else
-		if n.Token() == RETURN {
-			return true
-		}
-		n = n.Prev()
-		if n == nil {
-			return false
-		}
-	}
-	return false
-}
-
 func IsArithmetic(n NodeI) bool {
 	switch n.Token() {
 	case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
@@ -149,6 +133,32 @@ func WasArithmetic(n NodeI) bool {
 	for n.Token() != IF && n.Token() != WHILE && n.Token() != ILLEGAL {
 		switch n.Token() {
 		case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
+			return true
+		}
+		n = n.Prev()
+		if n == nil {
+			return false
+		}
+	}
+	return false
+}
+
+func WasReturn(n NodeI) bool {
+	for n.Token() != ILLEGAL {
+		if n.Token() == RETURN {
+			return true
+		}
+		n = n.Next()
+		if n == nil {
+			return false
+		}
+	}
+	return false
+}
+
+func InList(n NodeI) bool {
+	for n.Token() != EOL && n.Token() != ILLEGAL {
+		if n.Token() == LSQUARE {
 			return true
 		}
 		n = n.Prev()
@@ -248,6 +258,8 @@ func (this *Node) Next(v ...NodeI) NodeI {
 func (this *Node) String() (string, NodeI) {
 	var str string
 	switch this.Token() {
+	case EOL:
+		str = "\n"
 	case EQ:
 		str = "="
 	case ADD:
@@ -273,7 +285,7 @@ func (this *Node) String() (string, NodeI) {
 	case FALSE:
 		str = "$((0))"
 	case COMMA:
-		if Find(LSQUARE, this, PREV) != nil {
+		if InList(this) {
 			// If we are in a list then add a space.
 			str = " "
 		}
@@ -293,43 +305,42 @@ func (this *Node) String() (string, NodeI) {
 
 type Block struct {
 	*Node
-	next []NodeI
 }
 
 func (this Block) String() (string, NodeI) {
-	str := ""
+	var str string
 	if Find(IF, this, PREV) == nil && Find(WHILE, this, PREV) == nil {
 		str += " {"
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := GetMyFunction(this); n != nil {
 		// Search the block for variables and then check if they should be local.
-		for _, b := range this.next {
-			if b.Token() == IDENT {
-				str += "\nlocal " + b.Ident()
+		_, local := this.Next().String()
+		for local != nil {
+			if local.Token() == IDENT {
+				str += "\nlocal " + local.Ident()
 			}
+			_, local = local.String()
 		}
-		n = n.Next().Next().Next() // function->foo->(
+		param := n.Next().Next().Next() // function->foo->(
 		i := 1
-		for n.Token() != RPAREN {
-			if n.Token() == IDENT {
-				str += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", n.Ident(), n.Ident(), i)
+		for param.Token() != RPAREN {
+			if param.Token() == IDENT {
+				str += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", param.Ident(), param.Ident(), i)
 				i++
 			}
-			n = n.Next()
+			param = param.Next()
 		}
 	}
 	// Print each statement in the block.
-	for _, node := range this.next {
-		s, n := node.String()
+	s, line := this.Next().String()
+	str += s
+	for line != nil {
+		s, line = line.String()
 		str += s
-		for n != nil {
-			s, n = n.String()
-			str += s
-		}
 	}
 	// Was there a return in this block?
-	if WasReturn(this) {
+	if WasReturn(this.Next()) {
 		str += "return\n"
 	}
 	// Check to see what type of block we are in.
@@ -348,14 +359,6 @@ func (this Block) String() (string, NodeI) {
 		str += "done\n"
 	}
 	return str, this.Next()
-}
-
-type EndOf struct {
-	*Node
-}
-
-func (this EndOf) String() (string, NodeI) {
-	return "\n", this.Next()
 }
 
 type Function struct {
@@ -419,8 +422,9 @@ type Variable struct {
 func (this *Variable) String() (string, NodeI) {
 	var str string
 	// Are we in an exists function call, if so do something special.
-	if Find(EXISTS, this, NEXT) != nil { // a=exists("str")
-		str = "[ -e \"file.txt\" ]\n" + this.Ident() + "=$((!$?))"
+	if this.Next().Next().Token() == EXISTS { // a->=->exists->(->"str"->)
+		param, _ := this.Next().Next().Next().Next().String()
+		str = "[ -e " + param + " ]\n" + this.Ident() + "=$((!$?))"
 		return str, this.Next().Next().Next().Next().Next()
 	}
 	// If we got here then then it is a normal variable so check the previous token to see whats going on.

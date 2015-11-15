@@ -49,55 +49,45 @@ func ParseFile(path string) string {
 }
 
 func (this *Parser) ParseToString() string {
-	s, e := this.Parse()
-	if e != nil {
-		panic(e)
+	root, err := this.Parse()
+	if err != nil {
+		panic(err)
 	}
 	// Print each statement in the block.
 	var str string
-	for _, node := range s {
-		s, n := node.String()
+	s, n := root.String()
+	str += s
+	for n != nil {
+		s, n = n.String()
 		str += s
-		for n != nil {
-			s, n = n.String()
-			str += s
-		}
 	}
-
 	return str
 }
 
 // Parse parses a scripter string and returns a slice of statment AST objects.
-func (this *Parser) Parse(n ...NodeI) ([]NodeI, error) {
-	var prev NodeI
+func (this *Parser) Parse(n ...NodeI) (NodeI, error) {
+	var root NodeI
 	if len(n) == 1 {
-		prev = n[0]
+		root = n[0]
 	} else {
-		prev = &Node{}
+		root = &Node{}
 	}
-	var nodes = []NodeI{}
-	for {
-		if tok, _ := this.scanIgnoreWhitespace(); tok == EOF || tok == RBRACE {
-			return nodes, nil
-		} else {
-			this.unscan()
-			node, err := this.ParseStatement(prev)
-			if err != nil {
-				return nil, err
-			}
-			nodes = append(nodes, node)
-		}
+	if err := this.ParseStatement(root); err != nil {
+		return nil, err
 	}
+	return root, nil
 }
 
 // Parse parses a statement.
-func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
+func (this *Parser) ParseStatement(prev NodeI) error {
 	var curr NodeI
 	tok, lit := this.scanIgnoreWhitespace()
-	if tok == EOL || tok == EOF {
-		curr = &EndOf{&Node{}}
+	if tok == EOF || tok == RBRACE {
+		curr = &Node{}
 		curr.Token(tok)
-		return curr, nil
+		curr.Prev(prev)
+		prev.Next(curr)
+		return nil
 	}
 
 	switch tok {
@@ -123,30 +113,29 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 		// We create a node here to represent the block.
 		node := &Node{"", LBRACE, prev, nil}
 		block, _ := this.Parse(node)
-		b := &Block{&Node{}, block}
-		curr = b
+		curr = &Block{&Node{}}
+		curr.Token(tok)
+		curr.Prev(prev)
+		curr.Next(block)
+		prev.Next(curr)
+		return nil
 	default:
 		curr = &Node{}
-	}
-
-	next, e := this.ParseStatement(curr)
-	if e != nil {
-		return nil, e
 	}
 
 	curr.Ident(lit)
 	curr.Token(tok)
 	curr.Prev(prev)
-	curr.Next(next)
+	prev.Next(curr)
 
-	if curr.Token() == FUNCTION {
-		if ok, _ := this.funcs[next.Ident()]; ok {
-			panic("function " + next.Ident() + " already defined")
+	if prev.Token() == FUNCTION {
+		if ok, _ := this.funcs[curr.Ident()]; ok {
+			panic("function " + curr.Ident() + " already defined")
 		}
-		this.funcs[next.Ident()] = true
+		this.funcs[curr.Ident()] = true
 	}
 
-	return curr, nil
+	return this.ParseStatement(curr)
 }
 
 // scan returns the next token from the underlying scanner.
