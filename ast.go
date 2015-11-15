@@ -305,6 +305,7 @@ func (this *Node) String() (string, NodeI) {
 
 type Block struct {
 	*Node
+	block NodeI
 }
 
 func (this Block) String() (string, NodeI) {
@@ -314,33 +315,40 @@ func (this Block) String() (string, NodeI) {
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := GetMyFunction(this); n != nil {
+		// Get the arguments from the function.
+		var argsStr string
+		argsList := map[string]bool{}
+		args := n.Next().Next().Next() // function->foo->(
+		i := 1
+		for args.Token() != RPAREN {
+			if args.Token() == IDENT {
+				argsList[args.Ident()] = true
+				argsStr += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", args.Ident(), args.Ident(), i)
+				i++
+			}
+			args = args.Next()
+		}
 		// Search the block for variables and then check if they should be local.
-		_, local := this.Next().String()
+		_, local := this.block.String()
 		for local != nil {
 			if local.Token() == IDENT {
-				str += "\nlocal " + local.Ident()
+				if ok := argsList[local.Ident()]; ok == false {
+					str += "\nlocal " + local.Ident()
+				}
 			}
 			_, local = local.String()
 		}
-		param := n.Next().Next().Next() // function->foo->(
-		i := 1
-		for param.Token() != RPAREN {
-			if param.Token() == IDENT {
-				str += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", param.Ident(), param.Ident(), i)
-				i++
-			}
-			param = param.Next()
-		}
+		str += argsStr
 	}
 	// Print each statement in the block.
-	s, line := this.Next().String()
+	s, line := this.block.String()
 	str += s
 	for line != nil {
 		s, line = line.String()
 		str += s
 	}
 	// Was there a return in this block?
-	if WasReturn(this.Next()) {
+	if WasReturn(this.block) {
 		str += "return\n"
 	}
 	// Check to see what type of block we are in.

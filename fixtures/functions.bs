@@ -37,6 +37,5 @@ local p
 p="$1"
 v1="Local ""$p"
 v2="V3 Modified."
-return
 }
 "foo" "Var"

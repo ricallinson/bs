@@ -113,12 +113,7 @@ func (this *Parser) ParseStatement(prev NodeI) error {
 		// We create a node here to represent the block.
 		node := &Node{"", LBRACE, prev, nil}
 		block, _ := this.Parse(node)
-		curr = &Block{&Node{}}
-		curr.Token(tok)
-		curr.Prev(prev)
-		curr.Next(block)
-		prev.Next(curr)
-		return nil
+		curr = &Block{&Node{}, block}
 	default:
 		curr = &Node{}
 	}
