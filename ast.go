@@ -143,6 +143,24 @@ func CountVariables(n NodeI) int {
 	return i
 }
 
+func CountIfs(n NodeI) int {
+	var i int
+	for n.Token() != ILLEGAL {
+		switch n.Token() {
+		case IF:
+			i++
+			if n.Prev().Token() != ELSE {
+				return i
+			}
+		}
+		n = n.Prev()
+		if n == nil {
+			return i
+		}
+	}
+	return i
+}
+
 func Things(node NodeI) (string, NodeI) {
 	var str string
 	var s string
@@ -284,8 +302,12 @@ func (this Block) String() (string, NodeI) {
 		// If we are at the end of a function then print return.
 		str += "return\n}"
 	} else if Find(IF, this, PREV) != nil {
-		// If we are at the end of a if block then print fi.
-		str += "fi\n"
+		if this.Next().Token() != ELSE {
+			// If we are at the end of a if block so count the total if then print an for each fi.
+			for i := 0; i < CountIfs(this); i++ {
+				str += "fi\n"
+			}
+		}
 	} else if Find(WHILE, this, PREV) != nil {
 		// If we are at the end of a while block then print done.
 		str += "done\n"
@@ -349,7 +371,7 @@ type Else struct {
 }
 
 func (this Else) String() (string, NodeI) {
-	return "", this.Next()
+	return "else\n", this.Next()
 }
 
 type Variable struct {

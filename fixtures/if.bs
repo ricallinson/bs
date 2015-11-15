@@ -20,7 +20,7 @@ if [ $(($a > 2)) == 1 ]; then
 "echo" "-e" "Yes"
 else
 if [ "$a" == $((2)) ]; then
-"echo" "-e" "No"  
+"echo" "-e" "No"
 fi
 fi
 ===
