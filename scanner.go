@@ -72,6 +72,8 @@ func (s *Scanner) Scan() (tok Token, pos Pos, lit string) {
 	case '=':
 		if ch1, _ := s.r.read(); ch1 == '~' {
 			return EQREGEX, pos, ""
+		} else if ch1 == '=' {
+			return EEQ, pos, ""
 		}
 		s.r.unread()
 		return EQ, pos, ""

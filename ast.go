@@ -38,6 +38,7 @@ const (
 	AND                // AND
 	OR                 // OR
 	EQ                 // =
+	EEQ                // ==
 	NEQ                // !=
 	EQREGEX            // =~
 	NEQREGEX           // !~
@@ -89,7 +90,7 @@ func Lookup(ident string) Token {
 
 // true = Next, false = Prev
 func Find(t Token, n NodeI, dir bool) NodeI {
-	for n.Token() != 0 {
+	for n.Token() != ILLEGAL {
 		if n.Token() == t {
 			return n
 		}
@@ -105,12 +106,41 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 	return nil
 }
 
-func IsArithmetic(node NodeI) bool {
-	switch node.Token() {
+func IsArithmetic(n NodeI) bool {
+	switch n.Token() {
 	case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
 		return true
 	}
 	return false
+}
+
+func WasArithmetic(n NodeI) bool {
+	for n.Token() != IF && n.Token() != WHILE && n.Token() != ILLEGAL {
+		switch n.Token() {
+		case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
+			return true
+		}
+		n = n.Prev()
+		if n == nil {
+			return false
+		}
+	}
+	return false
+}
+
+func CountVariables(n NodeI) int {
+	var i int
+	for n.Token() != IF && n.Token() != WHILE && n.Token() != ILLEGAL {
+		switch n.Token() {
+		case IDENT, NUMBER:
+			i++
+		}
+		n = n.Prev()
+		if n == nil {
+			return i
+		}
+	}
+	return i
 }
 
 func Things(node NodeI) (string, NodeI) {
@@ -187,6 +217,8 @@ func (this *Node) String() (string, NodeI) {
 		str = " <= "
 	case GTE:
 		str = " >= "
+	case EEQ:
+		str = " == "
 	case RETURN:
 		str = "\"echo\" \"-ne\" "
 	case TRUE:
@@ -250,7 +282,7 @@ func (this Block) String() (string, NodeI) {
 	// Check to see what type of block we are in.
 	if Find(FUNCTION, this, PREV) != nil {
 		// If we are at the end of a function then print return.
-		str += "return\n}\n"
+		str += "return\n}"
 	} else if Find(IF, this, PREV) != nil {
 		// If we are at the end of a if block then print fi.
 		str += "fi\n"
@@ -292,7 +324,11 @@ type While struct {
 
 func (this While) String() (string, NodeI) {
 	str, node := Things(this.Next()) // while->(
-	return "while [ " + str + " ]; do", node.Next()
+	check := ""
+	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
+		check = " == 1"
+	}
+	return "while [ " + str + check + " ]; do", node.Next()
 }
 
 type If struct {
@@ -301,7 +337,11 @@ type If struct {
 
 func (this If) String() (string, NodeI) {
 	str, node := Things(this.Next()) // if->(
-	return "if [ " + str + " ]; then", node.Next()
+	check := ""
+	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
+		check = " == 1"
+	}
+	return "if [ " + str + check + " ]; then", node.Next()
 }
 
 type Else struct {

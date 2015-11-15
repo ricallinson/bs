@@ -1,6 +1,6 @@
 a = true;
 if (a) {
-    println("Yes");
+    println("Yes")
 }
 ---
 a=$((1))
@@ -10,9 +10,9 @@ fi
 ===
 a = 3;
 if (a > 2) {
-    println("Yes");
+    println("Yes")
 } else if (a == 2) {
-    println("No");
+    println("No")
 }
 ---
 a=$((3))
@@ -26,11 +26,11 @@ fi
 ===
 a = 3;
 if (a > 2) {
-    println("Yes");
+    println("Yes")
 } else if (a == 2) {
-    println("Maybe");
+    println("Maybe")
 } else {
-    println("No");
+    println("No")
 }
 ---
 a=$((3))
