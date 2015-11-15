@@ -361,6 +361,7 @@ func (this Block) String() (string, NodeI) {
 			for i := 0; i < CountIfs(this); i++ {
 				str += "fi\n"
 			}
+			str = str[:len(str)-1]
 		}
 	} else if Find(WHILE, this, PREV) != nil {
 		// If we are at the end of a while block then print done.

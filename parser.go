@@ -26,7 +26,6 @@ func NewParser(r io.Reader) *Parser {
 // NewStringParser returns a new instance of Parser.
 func NewParserFromString(in string) *Parser {
 	p := NewParser(strings.NewReader(in))
-	p.funcs = map[string]bool{}
 	return p
 }
 
@@ -39,7 +38,6 @@ func ParseString(in string) string {
 func NewParserFromFile(path string) *Parser {
 	r, _ := os.Open(path)
 	p := NewParser(r)
-	p.funcs = map[string]bool{}
 	return p
 }
 
@@ -66,6 +64,9 @@ func (this *Parser) ParseToString() string {
 
 // Parse parses a scripter string and returns a slice of statment AST objects.
 func (this *Parser) Parse(n ...NodeI) (NodeI, error) {
+	if this.funcs == nil {
+		this.funcs = map[string]bool{}
+	}
 	var root NodeI
 	if len(n) == 1 {
 		root = n[0]
