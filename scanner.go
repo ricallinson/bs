@@ -172,7 +172,7 @@ func (s *Scanner) scanIdent() (tok Token, pos Pos, lit string) {
 
 	// If the literal matches a keyword then return that keyword.
 	if tok = Lookup(lit); tok != IDENT {
-		return tok, pos, ""
+		return tok, pos, lit
 	}
 
 	return IDENT, pos, lit

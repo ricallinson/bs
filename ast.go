@@ -106,6 +106,37 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 	return nil
 }
 
+func GetMyFunction(n NodeI) NodeI {
+	for n.Token() != ILLEGAL {
+		if n.Token() == IF || n.Token() == WHILE {
+			return nil
+		} else if n.Token() == FUNCTION {
+			return n
+		}
+		n = n.Prev()
+		if n == nil {
+			return nil
+		}
+	}
+	return nil
+}
+
+func WasReturn(n NodeI) bool {
+	for n.Token() != ILLEGAL {
+		if n.Token() == FUNCTION || n.Token() == IF || n.Token() == WHILE {
+			return false
+		} else
+		if n.Token() == RETURN {
+			return true
+		}
+		n = n.Prev()
+		if n == nil {
+			return false
+		}
+	}
+	return false
+}
+
 func IsArithmetic(n NodeI) bool {
 	switch n.Token() {
 	case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
@@ -237,8 +268,6 @@ func (this *Node) String() (string, NodeI) {
 		str = " >= "
 	case EEQ:
 		str = " == "
-	case RETURN:
-		str = "\"echo\" \"-ne\" "
 	case TRUE:
 		str = "$((1))"
 	case FALSE:
@@ -256,6 +285,8 @@ func (this *Node) String() (string, NodeI) {
 		str = "$(\"ls\")"
 	case PRINTLN:
 		str = "\"echo\" \"-e\" "
+	case RETURN:
+		str = "\"echo\" \"-ne\" "
 	}
 	return str, this.Next()
 }
@@ -271,7 +302,7 @@ func (this Block) String() (string, NodeI) {
 		str += " {"
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
-	if n := Find(FUNCTION, this, PREV); n != nil {
+	if n := GetMyFunction(this); n != nil {
 		// Search the block for variables and then check if they should be local.
 		for _, b := range this.next {
 			if b.Token() == IDENT {
@@ -297,10 +328,14 @@ func (this Block) String() (string, NodeI) {
 			str += s
 		}
 	}
+	// Was there a return in this block?
+	if WasReturn(this) {
+		str += "return\n"
+	}
 	// Check to see what type of block we are in.
-	if Find(FUNCTION, this, PREV) != nil {
+	if GetMyFunction(this) != nil {
 		// If we are at the end of a function then print return.
-		str += "return\n}"
+		str += "}"
 	} else if Find(IF, this, PREV) != nil {
 		if this.Next().Token() != ELSE {
 			// If we are at the end of a if block so count the total if then print an for each fi.
