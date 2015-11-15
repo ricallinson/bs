@@ -110,14 +110,14 @@ func (this *Parser) ParseStatement(prev NodeI) (NodeI, error) {
 		curr = &If{&Node{}}
 	case ELSE:
 		curr = &Else{&Node{}}
+	case WHILE:
+		curr = &While{&Node{}}
 	case LBRACE:
 		// We create a node here to represent the block.
 		node := &Node{"{", LBRACE, prev, nil}
 		block, _ := this.Parse(node)
 		b := &Block{&Node{}, block}
 		curr = b
-	case WHILE:
-		curr = &While{&Node{}}
 	default:
 		curr = &Node{}
 	}

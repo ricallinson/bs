@@ -105,23 +105,21 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 	return nil
 }
 
-func IsConstruct(node NodeI) bool {
-	// If there is a left brace then we are in the construct.
-	if Find(LBRACE, node, PREV) != nil {
-		return false
-	}
-	if (Find(FUNCTION, node, PREV) != nil || Find(WHILE, node, PREV) != nil) && Find(LPAREN, node, PREV) != nil && Find(RPAREN, node, NEXT) != nil {
+func IsArithmetic(node NodeI) bool {
+	switch node.Token() {
+	case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
 		return true
 	}
 	return false
 }
 
-func IsArithmetic(node NodeI) bool {
-	switch node.Token() {
-	case ADD, SUB, DIV, MUL:
-		return true
+func Things(node NodeI) (NodeI, string) {
+	var str string
+	for node.Token() != RPAREN {
+		str += node.String()
+		node = node.Next()
 	}
-	return false
+	return node, str
 }
 
 type NodeI interface {
@@ -168,11 +166,7 @@ func (this *Node) Next(v ...NodeI) NodeI {
 }
 
 func (this *Node) String() string {
-	// Check to see if we are in a construct, if we are do not print any vars.
-	if IsConstruct(this) {
-		return this.Next().String()
-	}
-	str := ""
+	var str string
 	switch this.Token() {
 	case EQ:
 		str = "="
@@ -222,7 +216,7 @@ type Block struct {
 
 func (this Block) String() string {
 	str := ""
-	if Find(WHILE, this, PREV) == nil {
+	if Find(IF, this, PREV) == nil && Find(WHILE, this, PREV) == nil {
 		str += " {"
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
@@ -251,6 +245,9 @@ func (this Block) String() string {
 	if Find(FUNCTION, this, PREV) != nil {
 		// If we are at the end of a function then print return.
 		str += "return\n}\n"
+	} else if Find(IF, this, PREV) != nil {
+		// If we are at the end of a if block then print fi.
+		str += "fi\n"
 	} else if Find(WHILE, this, PREV) != nil {
 		// If we are at the end of a while block then print done.
 		str += "done\n"
@@ -271,7 +268,8 @@ type Function struct {
 }
 
 func (this *Function) String() string {
-	return "function " + this.Next().String()
+	node, _ := Things(this.Next().Next()) // func->name->(
+	return "function " + this.Next().Ident() + node.Next().String()
 }
 
 type FunctionName struct {
@@ -287,28 +285,8 @@ type While struct {
 }
 
 func (this While) String() string {
-	str := ""
-	n := this.Next().Next() // while->(
-	i := 1
-	for n.Token() != RPAREN {
-		switch n.Token() {
-		case IDENT:
-			str += fmt.Sprintf("$%s", n.Ident())
-		case NUMBER:
-			str += fmt.Sprintf("%s", n.Ident())
-		case LT:
-			str += " < "
-		case GT:
-			str += " > "
-		case LTE:
-			str += " <= "
-		case GTE:
-			str += " >= "
-		}
-		n = n.Next()
-		i++
-	}
-	return "while [ $((" + str + ")) == 1 ]; do" + this.Next().String()
+	node, str := Things(this.Next()) // while->(
+	return "while [ " + str + " ]; do" + node.Next().String()
 }
 
 type If struct {
@@ -316,7 +294,8 @@ type If struct {
 }
 
 func (this If) String() string {
-	return this.Next().String()
+	node, str := Things(this.Next()) // if->(
+	return "if [ " + str + " ]; then" + node.Next().String()
 }
 
 type Else struct {
@@ -332,10 +311,6 @@ type Variable struct {
 }
 
 func (this *Variable) String() string {
-	// Check to see if we are in a construct, if we are do not print any vars.
-	if IsConstruct(this) {
-		return this.Next().String()
-	}
 	var str string
 	// Are we in an exists function call, if so do something special.
 	if Find(EXISTS, this, NEXT) != nil { // a=exists("str")
@@ -346,9 +321,6 @@ func (this *Variable) String() string {
 	switch this.Prev().Token() {
 	case 0, LBRACE, EOL:
 		// If there is no parent, a { or an EOL then this must be the first var to be assigned.
-		str = this.Ident()
-	case FUNCTION:
-		// If the parent is a function then this is a function name not a variable.
 		str = this.Ident()
 	default:
 		// Are there any operators that makes this variable a number?
@@ -379,11 +351,7 @@ type Integer struct {
 }
 
 func (this Integer) String() string {
-	// Check to see if we are in a construct, if we are do not print any vars.
-	if IsConstruct(this) {
-		return this.Next().String()
-	}
-	str := ""
+	var str string
 	if IsArithmetic(this.Prev()) == false {
 		str = "$(("
 	}

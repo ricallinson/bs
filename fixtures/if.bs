@@ -1,0 +1,45 @@
+a = true;
+if (a) {
+    println("Yes");
+}
+---
+a=$((1))
+if [ "$a" == 1 ]; then
+"echo" "-e" "Yes"
+fi
+===
+a = 3;
+if (a > 2) {
+    println("Yes");
+} else if (a == 2) {
+    println("No");
+}
+---
+a=$((3))
+if [ $(($a > 2)) == 1 ]; then
+"echo" "-e" "Yes"
+else
+if [ "$a" == $((2)) ]; then
+"echo" "-e" "No"  
+fi
+fi
+===
+a = 3;
+if (a > 2) {
+    println("Yes");
+} else if (a == 2) {
+    println("Maybe");
+} else {
+    println("No");
+}
+---
+a=$((3))
+if [ $(($a > 2)) == 1 ]; then
+"echo" "-e" "Yes"
+else
+if [ "$a" == $((2)) ]; then
+"echo" "-e" "Maybe"
+else
+"echo" "-e" "No"
+fi
+fi
