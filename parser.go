@@ -53,10 +53,17 @@ func (this *Parser) ParseToString() string {
 	if e != nil {
 		panic(e)
 	}
+	// Print each statement in the block.
 	var str string
-	for _, l := range s {
-		str += l.String()
+	for _, node := range s {
+		s, n := node.String()
+		str += s
+		for n != nil {
+			s, n = n.String()
+			str += s
+		}
 	}
+
 	return str
 }
 

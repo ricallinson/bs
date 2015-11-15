@@ -113,13 +113,14 @@ func IsArithmetic(node NodeI) bool {
 	return false
 }
 
-func Things(node NodeI) (NodeI, string) {
+func Things(node NodeI) (string, NodeI) {
 	var str string
+	var s string
 	for node.Token() != RPAREN {
-		str += node.String()
-		node = node.Next()
+		s, node = node.String()
+		str += s
 	}
-	return node, str
+	return str, node
 }
 
 type NodeI interface {
@@ -127,7 +128,7 @@ type NodeI interface {
 	Token(...Token) Token
 	Prev(...NodeI) NodeI
 	Next(...NodeI) NodeI
-	String() string
+	String() (string, NodeI)
 }
 
 type Node struct {
@@ -165,7 +166,7 @@ func (this *Node) Next(v ...NodeI) NodeI {
 	return this.next
 }
 
-func (this *Node) String() string {
+func (this *Node) String() (string, NodeI) {
 	var str string
 	switch this.Token() {
 	case EQ:
@@ -206,7 +207,7 @@ func (this *Node) String() string {
 	case PRINTLN:
 		str = "\"echo\" \"-e\" "
 	}
-	return str + this.Next().String()
+	return str, this.Next()
 }
 
 type Block struct {
@@ -214,7 +215,7 @@ type Block struct {
 	next []NodeI
 }
 
-func (this Block) String() string {
+func (this Block) String() (string, NodeI) {
 	str := ""
 	if Find(IF, this, PREV) == nil && Find(WHILE, this, PREV) == nil {
 		str += " {"
@@ -238,8 +239,13 @@ func (this Block) String() string {
 		}
 	}
 	// Print each statement in the block.
-	for _, b := range this.next {
-		str += "" + b.String()
+	for _, node := range this.next {
+		s, n := node.String()
+		str += s
+		for n != nil {
+			s, n = n.String()
+			str += s
+		}
 	}
 	// Check to see what type of block we are in.
 	if Find(FUNCTION, this, PREV) != nil {
@@ -252,70 +258,70 @@ func (this Block) String() string {
 		// If we are at the end of a while block then print done.
 		str += "done\n"
 	}
-	return str
+	return str, this.Next()
 }
 
 type EndOf struct {
 	*Node
 }
 
-func (this EndOf) String() string {
-	return "\n"
+func (this EndOf) String() (string, NodeI) {
+	return "\n", this.Next()
 }
 
 type Function struct {
 	*Node
 }
 
-func (this *Function) String() string {
-	node, _ := Things(this.Next().Next()) // func->name->(
-	return "function " + this.Next().Ident() + node.Next().String()
+func (this *Function) String() (string, NodeI) {
+	_, node := Things(this.Next().Next()) // func->name->(
+	return "function " + this.Next().Ident(), node.Next()
 }
 
 type FunctionName struct {
 	*Node
 }
 
-func (this *FunctionName) String() string {
-	return "\"" + this.Ident() + "\" " + this.Next().String()
+func (this *FunctionName) String() (string, NodeI) {
+	return "\"" + this.Ident() + "\" ", this.Next()
 }
 
 type While struct {
 	*Node
 }
 
-func (this While) String() string {
-	node, str := Things(this.Next()) // while->(
-	return "while [ " + str + " ]; do" + node.Next().String()
+func (this While) String() (string, NodeI) {
+	str, node := Things(this.Next()) // while->(
+	return "while [ " + str + " ]; do", node.Next()
 }
 
 type If struct {
 	*Node
 }
 
-func (this If) String() string {
-	node, str := Things(this.Next()) // if->(
-	return "if [ " + str + " ]; then" + node.Next().String()
+func (this If) String() (string, NodeI) {
+	str, node := Things(this.Next()) // if->(
+	return "if [ " + str + " ]; then", node.Next()
 }
 
 type Else struct {
 	*Node
 }
 
-func (this Else) String() string {
-	return this.Next().String()
+func (this Else) String() (string, NodeI) {
+	return "", this.Next()
 }
 
 type Variable struct {
 	*Node
 }
 
-func (this *Variable) String() string {
+func (this *Variable) String() (string, NodeI) {
 	var str string
 	// Are we in an exists function call, if so do something special.
 	if Find(EXISTS, this, NEXT) != nil { // a=exists("str")
 		str = "[ -e \"file.txt\" ]\n" + this.Ident() + "=$((!$?))"
-		return str + this.Next().Next().Next().Next().Next().String()
+		return str, this.Next().Next().Next().Next().Next()
 	}
 	// If we got here then then it is a normal variable so check the previous token to see whats going on.
 	switch this.Prev().Token() {
@@ -335,22 +341,22 @@ func (this *Variable) String() string {
 			str = fmt.Sprintf("\"$%s\"", this.Ident())
 		}
 	}
-	return str + this.Next().String()
+	return str, this.Next()
 }
 
 type String struct {
 	*Node
 }
 
-func (this String) String() string {
-	return fmt.Sprintf("\"%s\"", this.Ident()) + this.Next().String()
+func (this String) String() (string, NodeI) {
+	return fmt.Sprintf("\"%s\"", this.Ident()), this.Next()
 }
 
 type Integer struct {
 	*Node
 }
 
-func (this Integer) String() string {
+func (this Integer) String() (string, NodeI) {
 	var str string
 	if IsArithmetic(this.Prev()) == false {
 		str = "$(("
@@ -360,5 +366,5 @@ func (this Integer) String() string {
 	if IsArithmetic(this.Next()) == false {
 		str += "))"
 	}
-	return str + this.Next().String()
+	return str, this.Next()
 }
