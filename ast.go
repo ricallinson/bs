@@ -98,6 +98,21 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 	return nil
 }
 
+func InConstruct(node NodeI) bool {
+	if (Find(FUNCTION, node, PREV) != nil || Find(WHILE, node, PREV) != nil) && Find(LPAREN, node, PREV) != nil && Find(RPAREN, node, NEXT) != nil {
+		return true
+	}
+	return false
+}
+
+func IsArithmetic(node NodeI) bool {
+	switch node.Token() {
+	case ADD, SUB, DIV, MUL:
+		return true
+	}
+	return false
+}
+
 type NodeI interface {
 	Ident(...string) string
 	Token(...Token) Token
@@ -142,6 +157,10 @@ func (this *Node) Next(v ...NodeI) NodeI {
 }
 
 func (this *Node) String() string {
+	// Check to see if we are in a construct, if we are do not print any vars.
+	if InConstruct(this) {
+		return this.Next().String()
+	}
 	str := ""
 	switch this.Token() {
 	case EQ:
@@ -156,6 +175,14 @@ func (this *Node) String() string {
 		str = " * "
 	case DIV:
 		str = " / "
+	case LT:
+		str = " < "
+	case GT:
+		str = " > "
+	case LTE:
+		str = " <= "
+	case GTE:
+		str = " >= "
 	case RETURN:
 		str = "\"echo\" \"-ne\" "
 	case TRUE:
@@ -178,15 +205,18 @@ type Block struct {
 }
 
 func (this Block) String() string {
-	str := " {"
-	// Search the block for varibales and then check if they should be local.
-	for _, b := range this.next {
-		if b.Token() == IDENT {
-			str += "\nlocal " + b.Ident()
-		}
+	str := ""
+	if Find(WHILE, this, PREV) == nil {
+		str += " {"
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := Find(FUNCTION, this, PREV); n != nil {
+		// Search the block for varibales and then check if they should be local.
+		for _, b := range this.next {
+			if b.Token() == IDENT {
+				str += "\nlocal " + b.Ident()
+			}
+		}
 		n = n.Next().Next().Next() // function->foo->(
 		i := 1
 		for n.Token() != RPAREN {
@@ -201,9 +231,11 @@ func (this Block) String() string {
 	}
 	// If we are at the end of a function then print return.
 	if Find(FUNCTION, this, PREV) != nil {
-		str += "return\n"
+		str += "return\n}\n"
+	} else if Find(WHILE, this, PREV) != nil {
+		str += "done\n"
 	}
-	return str + "}\n"
+	return str
 }
 
 type EndOf struct {
@@ -235,7 +267,28 @@ type While struct {
 }
 
 func (this While) String() string {
-	return "while " + this.Next().String()
+	str := ""
+	n := this.Next().Next() // while->(
+	i := 1
+	for n.Token() != RPAREN {
+		switch n.Token() {
+		case IDENT:
+			str += fmt.Sprintf("$%s", n.Ident())
+		case NUMBER:
+			str += fmt.Sprintf("%s", n.Ident())
+		case LT:
+			str += " < "
+		case GT:
+			str += " > "
+		case LTE:
+			str += " <= "
+		case GTE:
+			str += " >= "
+		}
+		n = n.Next()
+		i++
+	}
+	return "while [ $((" + str + ")) == 1 ]; do" + this.Next().String()
 }
 
 type If struct {
@@ -259,11 +312,11 @@ type Variable struct {
 }
 
 func (this *Variable) String() string {
-	str := ""
-	// Check to see if we are in a function, if we are do not print any vars.
-	if Find(FUNCTION, this, PREV) != nil && Find(LPAREN, this, PREV) != nil && Find(RPAREN, this, NEXT) != nil {
+	// Check to see if we are in a construct, if we are do not print any vars.
+	if InConstruct(this) {
 		return this.Next().String()
 	}
+	str := ""
 	switch this.Prev().Token() {
 	case 0, LBRACE, EOL:
 		// If there is no parent or EOL then this must be the first var to be assigned.
@@ -301,17 +354,17 @@ type Integer struct {
 }
 
 func (this Integer) String() string {
+	// Check to see if we are in a construct, if we are do not print any vars.
+	if InConstruct(this) {
+		return this.Next().String()
+	}
 	str := ""
-	switch this.Prev().Token() {
-	case ADD, SUB, DIV, MUL:
-	default:
+	if IsArithmetic(this.Prev()) == false {
 		str = "$(("
 	}
 	i, _ := strconv.Atoi(this.Ident())
 	str += fmt.Sprintf("%d", i)
-	switch this.Next().Token() {
-	case ADD, SUB, DIV, MUL:
-	default:
+	if IsArithmetic(this.Next()) == false {
 		str += "))"
 	}
 	return str + this.Next().String()
