@@ -10,4 +10,5 @@ func readdir(path, ext) {
     }
     return files
 }
+
 println(readdir("./examples", "bs"))

@@ -61,3 +61,21 @@ files= "ls" "$path"
 return
 }
 "echo" "-e" $("readdir" "./examples" "bs")
+===
+func readdir(path) {
+    files = call("ls", path)
+    for f in files {
+        println(f)
+    }
+}
+---
+function readdir {
+local files
+local path
+path="$1"
+files= "ls" "$path"
+for f in ${files[@]}; do
+"echo" "-e" "$f"
+done
+
+}
