@@ -62,6 +62,7 @@ const (
 	EXISTS             // exists
 	CONCAT             // concat
 	CALL               // call
+	BASH               // bash
 )
 
 var keywords map[string]Token
@@ -82,6 +83,7 @@ func init() {
 	keywords["exists"] = EXISTS
 	keywords["concat"] = CONCAT
 	keywords["call"] = CALL
+	keywords["bash"] = BASH
 }
 
 // Lookup returns the token associated with a given string.
@@ -393,6 +395,15 @@ func (this Block) String() (string, NodeI) {
 		str += "done\n"
 	}
 	return str, this.Next()
+}
+
+type Bash struct {
+	*Node
+}
+
+func (this *Bash) String() (string, NodeI) {
+	str := this.Next().Next().Ident() // bash->(->
+	return str, this.Next().Next().Next().Next()// bash->(->arg->)->
 }
 
 type Call struct {

@@ -109,15 +109,15 @@ Prints a text string to console with a new line.
 
 ### `call(path, arg, ...)`
 
-Runs command from path through shell.
+Runs command from path through the bash shell.
 
-### TODO: `bash(rawStatement)`
+### `bash(rawStatement)`
 
 Put `rawStatement` into compiled code for Bash.
 
 ### `ls(path)`
 
-Equals to `ls` and `dir /w`.
+Equals to `ls`.
 
 ### `exists(path)`
 

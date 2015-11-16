@@ -16,3 +16,7 @@ print("foo")
 call("curl", "-I", "http://yahoo.com/")
 ---
 "curl" "-I" "http://yahoo.com/"
+===
+bash("ps aux")
+---
+ps aux
