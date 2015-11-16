@@ -28,70 +28,6 @@ func Lookup(ident string) Token {
     return IDENT
 }
 
-// Look back from the given node and return a 'function' node if the given node is with a 'function' block.
-func GetMyFunction(n NodeI) NodeI {
-    for n.Token() != ILLEGAL {
-        if n.Token() == IF || n.Token() == WHILE || n.Token() == FORIN {
-            return nil
-        } else if n.Token() == FUNCTION {
-            return n
-        }
-        n = n.Prev()
-        if n == nil {
-            return nil
-        }
-    }
-    return nil
-}
-
-// Look back from the given node and return an 'if' node if the given node is with a 'if' block.
-func GetMyIf(n NodeI) NodeI {
-    for n.Token() != ILLEGAL {
-        if n.Token() == FUNCTION || n.Token() == WHILE || n.Token() == FORIN {
-            return nil
-        } else if n.Token() == IF {
-            return n
-        }
-        n = n.Prev()
-        if n == nil {
-            return nil
-        }
-    }
-    return nil
-}
-
-// Look back from the given node and return an 'while' node if the given node is with a 'while' block.
-func GetMyWhile(n NodeI) NodeI {
-    for n.Token() != ILLEGAL {
-        if n.Token() == FUNCTION || n.Token() == IF || n.Token() == FORIN {
-            return nil
-        } else if n.Token() == WHILE {
-            return n
-        }
-        n = n.Prev()
-        if n == nil {
-            return nil
-        }
-    }
-    return nil
-}
-
-// Look back from the given node and return an 'for in' node if the given node is with a 'for in' block.
-func GetMyForIn(n NodeI) NodeI {
-    for n.Token() != ILLEGAL {
-        if n.Token() == FUNCTION || n.Token() == IF || n.Token() == WHILE {
-            return nil
-        } else if n.Token() == FORIN {
-            return n
-        }
-        n = n.Prev()
-        if n == nil {
-            return nil
-        }
-    }
-    return nil
-}
-
 // Is the given node and arithmetic operator.
 func IsArithmetic(n NodeI) bool {
     switch n.Token() {
@@ -109,20 +45,6 @@ func WasArithmetic(n NodeI) bool {
             return true
         }
         n = n.Prev()
-        if n == nil {
-            return false
-        }
-    }
-    return false
-}
-
-// Look back to see if the given node was in a function with a return.
-func WasReturn(n NodeI) bool {
-    for n.Token() != FUNCTION && n.Token() != ILLEGAL {
-        if n.Token() == RETURN {
-            return true
-        }
-        n = n.Next()
         if n == nil {
             return false
         }
