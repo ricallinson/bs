@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"strconv"
+	// "strconv"
 	"strings"
 )
 
@@ -384,7 +384,31 @@ type FunctionName struct {
 }
 
 func (this *FunctionName) String() (string, NodeI) {
-	return "\"" + this.Ident() + "\" ", this.Next()
+	// If the line stars with a function then print it out.
+	if this.Prev().Token() == EOL || this.Prev().Token() == ILLEGAL {
+		return "\"" + this.Ident() + "\" ", this.Next()
+	}
+	// If the function call is a value then it must be wrapped in $().
+	str := "$(\"" + this.Ident() + "\" "
+	// Get the function arguments by consuming all following nodes until the close of the function bracket.
+	var s string
+	count := 1
+	node := this.Next().Next() // foo->(->
+	for node != nil && count > 0 {
+		s, node = node.String()
+		if node.Token() == LPAREN {
+			count++
+		} else if node.Token() == RPAREN {
+			count--
+		}
+		str += s
+	}
+	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
+		str = "$((" + str
+	} else if IsArithmetic(this.Prev()) && IsArithmetic(node.Next()) == false {
+		str += "))"
+	}
+	return str + ")", node.Next()
 }
 
 type While struct {
@@ -474,8 +498,7 @@ func (this Integer) String() (string, NodeI) {
 	if IsArithmetic(this.Prev()) == false {
 		str = "$(("
 	}
-	i, _ := strconv.Atoi(this.Ident())
-	str += fmt.Sprintf("%d", i)
+	str += this.Ident()
 	if IsArithmetic(this.Next()) == false {
 		str += "))"
 	}
