@@ -16,18 +16,6 @@ limitations under the License.
 
 package main
 
-import (
-	"strings"
-)
-
-// Lookup returns the token associated with a given string.
-func Lookup(ident string) Token {
-	if tok, ok := keywords[strings.ToLower(ident)]; ok {
-		return tok
-	}
-	return IDENT
-}
-
 // Is the given node and arithmetic operator.
 func IsArithmetic(n NodeI) bool {
 	switch n.Token() {

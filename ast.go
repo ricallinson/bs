@@ -16,6 +16,10 @@ limitations under the License.
 
 package main
 
+import (
+	"strings"
+)
+
 type Token int // Token represents a lexical token.
 
 const (
@@ -97,4 +101,12 @@ func init() {
 	keywords["bash"] = BASH
 	keywords["array"] = ARRAY
 	keywords["for"] = FORIN
+}
+
+// Lookup returns the token associated with a given string.
+func Lookup(ident string) Token {
+	if tok, ok := keywords[strings.ToLower(ident)]; ok {
+		return tok
+	}
+	return IDENT
 }

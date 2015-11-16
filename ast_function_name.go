@@ -25,10 +25,11 @@ func (this *FunctionName) String() (string, NodeI) {
 	if this.Prev().Token() == EOL || this.Prev().Token() == ILLEGAL {
 		return "\"" + this.Ident() + "\" ", this.Next()
 	}
-	// If the function call is a value then it must be wrapped in $().
+	// Otherwise the function call is a value then it must be wrapped in '$("")'.
 	str := "$(\"" + this.Ident() + "\""
 	s, node := GetArgs(this.Next().Next(), " ") // foo->(->
 	str += s
+	// If the function call is part of some arithmetic then is must be wrapped again in '$(())'.
 	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
 		str = "$((" + str
 	} else if IsArithmetic(this.Prev()) && IsArithmetic(node.Next()) == false {

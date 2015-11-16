@@ -35,7 +35,7 @@ func (this *Variable) String() (string, NodeI) {
 	// If we got here then then it is a normal variable so check the previous token to see whats going on.
 	switch this.Prev().Token() {
 	case 0, EOL:
-		// If there is no parent, a { or an EOL then this must be the first var to be assigned.
+		// If there is no parent, a '{' or an 'EOL' then this must be the first var to be assigned.
 		str = this.Ident()
 	default:
 		// Are there any operators that makes this variable a number?
@@ -46,7 +46,7 @@ func (this *Variable) String() (string, NodeI) {
 		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) {
 			str = fmt.Sprintf("$%s", this.Ident())
 		} else {
-			// Otherwise assume the var needs to be wrapped.
+			// Otherwise assume the var needs to be wrapped as a string in '""'.
 			str = fmt.Sprintf("\"$%s\"", this.Ident())
 		}
 	}

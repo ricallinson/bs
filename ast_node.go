@@ -16,10 +16,6 @@ limitations under the License.
 
 package main
 
-import (
-// "fmt"
-)
-
 type NodeI interface {
 	Ident(...string) string
 	Token(...Token) Token
