@@ -17,10 +17,10 @@ limitations under the License.
 package main
 
 type Function struct {
-    *Node
+	*Node
 }
 
 func (this *Function) String() (string, NodeI) {
-    _, node := GetArgs(this.Next().Next(), "") // func->name->(
-    return "function " + this.Next().Ident(), node.Next()
+	_, node := GetArgs(this.Next().Next(), "") // func->name->(
+	return "function " + this.Next().Ident(), node.Next()
 }

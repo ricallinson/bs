@@ -17,11 +17,11 @@ limitations under the License.
 package main
 
 type ForIn struct {
-    *Node
+	*Node
 }
 
 func (this ForIn) String() (string, NodeI) {
-    // Get the list.
-    l := this.Next().Next().Next().Ident() // for->var->in->
-    return "for " + this.Next().Ident() + " in ${" + l + "[@]}; do", this.Next().Next().Next().Next()
+	// Get the list.
+	l := this.Next().Next().Next().Ident() // for->var->in->
+	return "for " + this.Next().Ident() + " in ${" + l + "[@]}; do", this.Next().Next().Next().Next()
 }

@@ -17,10 +17,10 @@ limitations under the License.
 package main
 
 type Bash struct {
-    *Node
+	*Node
 }
 
 func (this *Bash) String() (string, NodeI) {
-    str := this.Next().Next().Ident()            // bash->(->
-    return str, this.Next().Next().Next().Next() // bash->(->arg->)->
+	str := this.Next().Next().Ident()            // bash->(->
+	return str, this.Next().Next().Next().Next() // bash->(->arg->)->
 }

@@ -17,10 +17,10 @@ limitations under the License.
 package main
 
 type Call struct {
-    *Node
+	*Node
 }
 
 func (this *Call) String() (string, NodeI) {
-    str, node := GetArgs(this.Next().Next(), " ")
-    return str, node
+	str, node := GetArgs(this.Next().Next(), " ")
+	return str, node
 }

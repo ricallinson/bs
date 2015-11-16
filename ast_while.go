@@ -17,14 +17,14 @@ limitations under the License.
 package main
 
 type While struct {
-    *Node
+	*Node
 }
 
 func (this While) String() (string, NodeI) {
-    str, node := GetArgs(this.Next(), "") // while->(
-    check := ""
-    if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
-        check = " == 1"
-    }
-    return "while [ " + str + check + " ]; do", node
+	str, node := GetArgs(this.Next(), "") // while->(
+	check := ""
+	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
+		check = " == 1"
+	}
+	return "while [ " + str + check + " ]; do", node
 }

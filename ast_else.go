@@ -17,12 +17,12 @@ limitations under the License.
 package main
 
 type Else struct {
-    *Node
+	*Node
 }
 
 func (this Else) String() (string, NodeI) {
-    if this.Next().Token() == IF {
-        return "else\n", this.Next()
-    }
-    return "else", this.Next()
+	if this.Next().Token() == IF {
+		return "else\n", this.Next()
+	}
+	return "else", this.Next()
 }

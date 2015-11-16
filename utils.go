@@ -17,92 +17,92 @@ limitations under the License.
 package main
 
 import (
-    "strings"
+	"strings"
 )
 
 // Lookup returns the token associated with a given string.
 func Lookup(ident string) Token {
-    if tok, ok := keywords[strings.ToLower(ident)]; ok {
-        return tok
-    }
-    return IDENT
+	if tok, ok := keywords[strings.ToLower(ident)]; ok {
+		return tok
+	}
+	return IDENT
 }
 
 // Is the given node and arithmetic operator.
 func IsArithmetic(n NodeI) bool {
-    switch n.Token() {
-    case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
-        return true
-    }
-    return false
+	switch n.Token() {
+	case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
+		return true
+	}
+	return false
 }
 
 // Look back to see if the given node is part of an arithmetic statement.
 func WasArithmetic(n NodeI) bool {
-    for n.Token() != IF && n.Token() != WHILE && n.Token() != ILLEGAL {
-        switch n.Token() {
-        case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
-            return true
-        }
-        n = n.Prev()
-        if n == nil {
-            return false
-        }
-    }
-    return false
+	for n.Token() != IF && n.Token() != WHILE && n.Token() != ILLEGAL {
+		switch n.Token() {
+		case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
+			return true
+		}
+		n = n.Prev()
+		if n == nil {
+			return false
+		}
+	}
+	return false
 }
 
 // Count the number of variables that have been used in the statement prior to the given node.
 func CountVariables(n NodeI) int {
-    var i int
-    for n.Token() != EOL && n.Token() != ILLEGAL {
-        switch n.Token() {
-        case IDENT, NUMBER:
-            i++
-        }
-        n = n.Prev()
-        if n == nil {
-            return i
-        }
-    }
-    return i
+	var i int
+	for n.Token() != EOL && n.Token() != ILLEGAL {
+		switch n.Token() {
+		case IDENT, NUMBER:
+			i++
+		}
+		n = n.Prev()
+		if n == nil {
+			return i
+		}
+	}
+	return i
 }
 
 // Count the number of prior if declarations in an if else chain.
 func CountIfs(n NodeI) int {
-    var i int
-    for n.Token() != ILLEGAL {
-        switch n.Token() {
-        case IF:
-            i++
-            if n.Prev().Token() != ELSE {
-                return i
-            }
-        }
-        n = n.Prev()
-        if n == nil {
-            return i
-        }
-    }
-    return i
+	var i int
+	for n.Token() != ILLEGAL {
+		switch n.Token() {
+		case IF:
+			i++
+			if n.Prev().Token() != ELSE {
+				return i
+			}
+		}
+		n = n.Prev()
+		if n == nil {
+			return i
+		}
+	}
+	return i
 }
 
-// Get the function arguments by consuming all following nodes 
+// Get the function arguments by consuming all following nodes
 // until the close of the function bracket or a { is found.
 func GetArgs(n NodeI, sep string) (string, NodeI) {
-    var str string
-    var s string
-    count := 1
-    for n != nil && n.Token() != LBRACE && count > 0 {
-        s, n = n.String()
-        if n.Token() == LPAREN {
-            count++
-        } else if n.Token() == RPAREN {
-            count--
-        }
-        if len(s) > 0 {
-            str += sep + s
-        }
-    }
-    return str, n
+	var str string
+	var s string
+	count := 1
+	for n != nil && n.Token() != LBRACE && count > 0 {
+		s, n = n.String()
+		if n.Token() == LPAREN {
+			count++
+		} else if n.Token() == RPAREN {
+			count--
+		}
+		if len(s) > 0 {
+			str += sep + s
+		}
+	}
+	return str, n
 }

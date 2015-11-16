@@ -17,14 +17,14 @@ limitations under the License.
 package main
 
 import (
-    "strings"
+	"strings"
 )
 
 type Array struct {
-    *Node
+	*Node
 }
 
 func (this *Array) String() (string, NodeI) {
-    str, node := GetArgs(this.Next().Next(), " ")
-    return "(" + strings.TrimSpace(str) + ")", node
+	str, node := GetArgs(this.Next().Next(), " ")
+	return "(" + strings.TrimSpace(str) + ")", node
 }

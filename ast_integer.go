@@ -17,17 +17,17 @@ limitations under the License.
 package main
 
 type Integer struct {
-    *Node
+	*Node
 }
 
 func (this Integer) String() (string, NodeI) {
-    var str string
-    if IsArithmetic(this.Prev()) == false {
-        str = "$(("
-    }
-    str += this.Ident()
-    if IsArithmetic(this.Next()) == false {
-        str += "))"
-    }
-    return str, this.Next()
+	var str string
+	if IsArithmetic(this.Prev()) == false {
+		str = "$(("
+	}
+	str += this.Ident()
+	if IsArithmetic(this.Next()) == false {
+		str += "))"
+	}
+	return str, this.Next()
 }

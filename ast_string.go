@@ -16,14 +16,14 @@ limitations under the License.
 
 package main
 
-import(
-    "fmt"
+import (
+	"fmt"
 )
 
 type String struct {
-    *Node
+	*Node
 }
 
 func (this String) String() (string, NodeI) {
-    return fmt.Sprintf("\"%s\"", this.Ident()), this.Next()
+	return fmt.Sprintf("\"%s\"", this.Ident()), this.Next()
 }

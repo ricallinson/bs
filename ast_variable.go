@@ -16,39 +16,39 @@ limitations under the License.
 
 package main
 
-import(
-    "fmt"
+import (
+	"fmt"
 )
 
 type Variable struct {
-    *Node
+	*Node
 }
 
 func (this *Variable) String() (string, NodeI) {
-    var str string
-    // Are we in an exists function call, if so do something special.
-    if this.Next().Next().Token() == EXISTS { // a->=->exists->(->"str"->)
-        param, _ := this.Next().Next().Next().Next().String()
-        str = "[ -e " + param + " ]\n" + this.Ident() + "=$((!$?))"
-        return str, this.Next().Next().Next().Next().Next()
-    }
-    // If we got here then then it is a normal variable so check the previous token to see whats going on.
-    switch this.Prev().Token() {
-    case 0, EOL:
-        // If there is no parent, a { or an EOL then this must be the first var to be assigned.
-        str = this.Ident()
-    default:
-        // Are there any operators that makes this variable a number?
-        if IsArithmetic(this.Prev()) == false && IsArithmetic(this.Next()) {
-            str = fmt.Sprintf("$(($%s", this.Ident())
-        } else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) == false {
-            str = fmt.Sprintf("$%s))", this.Ident())
-        } else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) {
-            str = fmt.Sprintf("$%s", this.Ident())
-        } else {
-            // Otherwise assume the var needs to be wrapped.
-            str = fmt.Sprintf("\"$%s\"", this.Ident())
-        }
-    }
-    return str, this.Next()
+	var str string
+	// Are we in an exists function call, if so do something special.
+	if this.Next().Next().Token() == EXISTS { // a->=->exists->(->"str"->)
+		param, _ := this.Next().Next().Next().Next().String()
+		str = "[ -e " + param + " ]\n" + this.Ident() + "=$((!$?))"
+		return str, this.Next().Next().Next().Next().Next()
+	}
+	// If we got here then then it is a normal variable so check the previous token to see whats going on.
+	switch this.Prev().Token() {
+	case 0, EOL:
+		// If there is no parent, a { or an EOL then this must be the first var to be assigned.
+		str = this.Ident()
+	default:
+		// Are there any operators that makes this variable a number?
+		if IsArithmetic(this.Prev()) == false && IsArithmetic(this.Next()) {
+			str = fmt.Sprintf("$(($%s", this.Ident())
+		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) == false {
+			str = fmt.Sprintf("$%s))", this.Ident())
+		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) {
+			str = fmt.Sprintf("$%s", this.Ident())
+		} else {
+			// Otherwise assume the var needs to be wrapped.
+			str = fmt.Sprintf("\"$%s\"", this.Ident())
+		}
+	}
+	return str, this.Next()
 }

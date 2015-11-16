@@ -17,14 +17,14 @@ limitations under the License.
 package main
 
 type If struct {
-    *Node
+	*Node
 }
 
 func (this If) String() (string, NodeI) {
-    str, node := GetArgs(this.Next(), "") // if->(
-    check := ""
-    if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
-        check = " == 1"
-    }
-    return "if [ " + str + check + " ]; then", node
+	str, node := GetArgs(this.Next(), "") // if->(
+	check := ""
+	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
+		check = " == 1"
+	}
+	return "if [ " + str + check + " ]; then", node
 }
