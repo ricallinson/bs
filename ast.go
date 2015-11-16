@@ -133,7 +133,7 @@ func Find(t Token, n NodeI, dir bool) NodeI {
 
 func GetMyFunction(n NodeI) NodeI {
 	for n.Token() != ILLEGAL {
-		if n.Token() == IF || n.Token() == WHILE {
+		if n.Token() == IF || n.Token() == WHILE || n.Token() == FORIN {
 			return nil
 		} else if n.Token() == FUNCTION {
 			return n
@@ -356,11 +356,9 @@ type Block struct {
 
 func (this Block) String() (string, NodeI) {
 	var str string
-	if Find(FUNCTION, this, PREV) != nil {
-		str += " {"
-	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
 	if n := GetMyFunction(this); n != nil {
+		str += " {"
 		// Get the arguments from the function.
 		var argsStr string
 		argsList := map[string]bool{}
