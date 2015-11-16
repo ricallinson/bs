@@ -6,6 +6,16 @@ __WARNING: IN PROGRESS__
 
 Bash Scripting is a simple programming language that compiles to Bash.
 
+## Use
+
+### Execute Code
+
+    bs /path/to/file.bs
+
+### Generate Script
+
+    bs -script /path/to/file.bs
+
 ## Syntax
 
 The syntax of bs is [go-based](https://en.wikipedia.org/wiki/Go_(programming_language)) (derived from C programming language). If you have learned C, Java, C++ or JavaScript, bs is quite easy for you.

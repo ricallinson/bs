@@ -24,6 +24,16 @@ func NewParser(r io.Reader) *Parser {
 }
 
 // NewStringParser returns a new instance of Parser.
+func NewParserFromFile(path string) *Parser {
+	r, err := os.Open(path)
+	if err != nil {
+		panic("File not found")
+	}
+	p := NewParser(r)
+	return p
+}
+
+// NewParserFromString returns a new instance of Parser.
 func NewParserFromString(in string) *Parser {
 	p := NewParser(strings.NewReader(in))
 	return p
@@ -32,13 +42,6 @@ func NewParserFromString(in string) *Parser {
 func ParseString(in string) string {
 	p := NewParserFromString(in)
 	return p.ParseToString()
-}
-
-// NewStringParser returns a new instance of Parser.
-func NewParserFromFile(path string) *Parser {
-	r, _ := os.Open(path)
-	p := NewParser(r)
-	return p
 }
 
 func ParseFile(path string) string {
