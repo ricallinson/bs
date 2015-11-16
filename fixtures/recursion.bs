@@ -20,7 +20,7 @@ if [ "$num" == $((1)) ]; then
 "echo" "-ne" $((1))
 return
 else
-"echo" "-ne" $(($("fibonacci" $(($num - 2))) + $("fibonacci" $(($num - 1)))))
+"echo" "-ne" $(($("fibonacci" $(($num  -  2))) + $("fibonacci" $(($num  -  1)))))
 return
 fi
 fi
