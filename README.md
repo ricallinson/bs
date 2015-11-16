@@ -95,7 +95,7 @@ Prints a text string to console without a newline.
 
 ### `println(text, ...)`
 
-Prints a text string to console with a new line (LF for bash, CRLF for batch).
+Prints a text string to console with a new line.
 
 ### TODO: `call(path, arg, ...)`
 

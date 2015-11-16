@@ -12,3 +12,7 @@ println("foo")
 print("foo")
 ---
 "echo" "-ne" "foo"
+===
+call("curl", "-I", "http://yahoo.com/")
+---
+"curl" "-I" "http://yahoo.com/"

@@ -61,6 +61,7 @@ const (
 	LS                 // ls
 	EXISTS             // exists
 	CONCAT             // concat
+	CALL               // call
 )
 
 var keywords map[string]Token
@@ -80,6 +81,7 @@ func init() {
 	keywords["ls"] = LS
 	keywords["exists"] = EXISTS
 	keywords["concat"] = CONCAT
+	keywords["call"] = CALL
 }
 
 // Lookup returns the token associated with a given string.
@@ -212,6 +214,25 @@ func Things(node NodeI) (string, NodeI) {
 		str += s
 	}
 	return str, node
+}
+
+func GetArgs(n NodeI, sep string) (string, NodeI) {
+	// Get the function arguments by consuming all following nodes until the close of the function bracket.
+	var str string
+	var s string
+	count := 1
+	for n != nil && count > 0 {
+		s, n = n.String()
+		if n.Token() == LPAREN {
+			count++
+		} else if n.Token() == RPAREN {
+			count--
+		}
+		if len(s) > 0 {
+			str += sep + s
+		}
+	}
+	return str, n
 }
 
 type NodeI interface {
@@ -374,6 +395,15 @@ func (this Block) String() (string, NodeI) {
 	return str, this.Next()
 }
 
+type Call struct {
+	*Node
+}
+
+func (this *Call) String() (string, NodeI) {
+	str, node := GetArgs(this.Next().Next(), " ")
+	return str, node
+}
+
 type Function struct {
 	*Node
 }
@@ -394,19 +424,8 @@ func (this *FunctionName) String() (string, NodeI) {
 	}
 	// If the function call is a value then it must be wrapped in $().
 	str := "$(\"" + this.Ident() + "\" "
-	// Get the function arguments by consuming all following nodes until the close of the function bracket.
-	var s string
-	count := 1
-	node := this.Next().Next() // foo->(->
-	for node != nil && count > 0 {
-		s, node = node.String()
-		if node.Token() == LPAREN {
-			count++
-		} else if node.Token() == RPAREN {
-			count--
-		}
-		str += s
-	}
+	s, node := GetArgs(this.Next().Next(), "") // foo->(->
+	str += s
 	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
 		str = "$((" + str
 	} else if IsArithmetic(this.Prev()) && IsArithmetic(node.Next()) == false {
