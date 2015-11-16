@@ -97,7 +97,7 @@ Prints a text string to console without a newline.
 
 Prints a text string to console with a new line.
 
-### TODO: `call(path, arg, ...)`
+### `call(path, arg, ...)`
 
 Runs command from path through shell.
 
