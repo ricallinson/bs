@@ -56,6 +56,7 @@ const (
 	COLON              // :
 	SEMICOLON          // ;
 	DOT                // .
+	PRINT              // print
 	PRINTLN            // println
 	LS                 // ls
 	EXISTS             // exists
@@ -74,6 +75,7 @@ func init() {
 	keywords["false"] = FALSE
 	keywords["return"] = RETURN
 	// Built-ins
+	keywords["print"] = PRINT
 	keywords["println"] = PRINTLN
 	keywords["ls"] = LS
 	keywords["exists"] = EXISTS
@@ -295,6 +297,8 @@ func (this *Node) String() (string, NodeI) {
 		str = ")"
 	case LS:
 		str = "$(\"ls\")"
+	case PRINT:
+		str = "\"echo\" \"-ne\" "
 	case PRINTLN:
 		str = "\"echo\" \"-e\" "
 	case RETURN:

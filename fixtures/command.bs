@@ -8,3 +8,7 @@ ex=$((!$?))
 println("foo")
 ---
 "echo" "-e" "foo"
+===
+print("foo")
+---
+"echo" "-ne" "foo"

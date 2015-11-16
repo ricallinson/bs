@@ -86,3 +86,29 @@ func fibonacci(num) {
 }
 println(fibonacci(8))
 ```
+
+## Built-in functions
+
+### `print(text, ...)`
+
+Prints a text string to console without a newline.
+
+### `println(text, ...)`
+
+Prints a text string to console with a new line (LF for bash, CRLF for batch).
+
+### TODO: `call(path, arg, ...)`
+
+Runs command from path through shell.
+
+### TODO: `bash(rawStatement)`
+
+Put `rawStatement` into compiled code for Bash.
+
+### `ls(path)`
+
+Equals to `ls` and `dir /w`.
+
+### `exists(path)`
+
+Test existence of given path. 
