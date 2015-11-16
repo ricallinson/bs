@@ -68,25 +68,6 @@ func CountVariables(n NodeI) int {
 	return i
 }
 
-// Count the number of prior if declarations in an if else chain.
-func CountIfs(n NodeI) int {
-	var i int
-	for n.Token() != ILLEGAL {
-		switch n.Token() {
-		case IF:
-			i++
-			if n.Prev().Token() != ELSE {
-				return i
-			}
-		}
-		n = n.Prev()
-		if n == nil {
-			return i
-		}
-	}
-	return i
-}
-
 // Get the function arguments by consuming all following nodes
 // until the close of the function bracket or a { is found.
 func GetArgs(n NodeI, sep string) (string, NodeI) {

@@ -143,6 +143,37 @@ func (this Block) BlockString() string {
 	return str
 }
 
+// Count the number of prior 'if' declarations in an 'if else' chain.
+func (this Block) CountIfs(n NodeI) int {
+	var i int
+	for n.Token() != ILLEGAL {
+		switch n.Token() {
+		case IF:
+			i++
+			if n.Prev().Token() != ELSE {
+				return i
+			}
+		}
+		n = n.Prev()
+		if n == nil {
+			return i
+		}
+	}
+	return i
+}
+
+func (this Block) IfTerminators() string {
+	var str string
+	if this.Next().Token() != ELSE {
+		// We are at the end of an 'if' block so count the total 'if' statements and then print an 'fi' for each .
+		for i := 0; i < this.CountIfs(this); i++ {
+			str += "fi\n"
+		}
+		str = str[:len(str)-1]
+	}
+	return str
+}
+
 func (this Block) String() (string, NodeI) {
 	var str string
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
@@ -160,13 +191,7 @@ func (this Block) String() (string, NodeI) {
 		// If we are at the end of a function then print return.
 		str += "}"
 	} else if this.GetIf(this) != nil {
-		if this.Next().Token() != ELSE {
-			// If we are at the end of a if block so count the total if then print an for each fi.
-			for i := 0; i < CountIfs(this); i++ {
-				str += "fi\n"
-			}
-			str = str[:len(str)-1]
-		}
+		str += this.IfTerminators()
 	} else if this.GetWhile(this) != nil || this.GetForIn(this) != nil {
 		// If we are at the end of a while block then print done.
 		str += "done\n"
