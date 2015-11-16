@@ -112,3 +112,7 @@ Equals to `ls` and `dir /w`.
 ### `exists(path)`
 
 Test existence of given path. 
+
+## Inspiration
+
+This project was inspired by [Batsh](https://github.com/BYVoid/Batsh).
