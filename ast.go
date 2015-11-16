@@ -461,7 +461,7 @@ func (this *FunctionName) String() (string, NodeI) {
 		return "\"" + this.Ident() + "\" ", this.Next()
 	}
 	// If the function call is a value then it must be wrapped in $().
-	str := "$(\"" + this.Ident() + "\" "
+	str := "$(\"" + this.Ident() + "\""
 	s, node := GetArgs(this.Next().Next(), " ") // foo->(->
 	str += s
 	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
