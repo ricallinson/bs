@@ -10,9 +10,7 @@ func fibonacci(num) {
 println(fibonacci(8))
 ---
 function fibonacci {
-local _1
 local num
-local _0
 num="$1"
 if [ "$num" == $((0)) ]; then
 "echo" "-ne" $((0))
@@ -22,9 +20,7 @@ if [ "$num" == $((1)) ]; then
 "echo" "-ne" $((1))
 return
 else
-_0=$("fibonacci" $(($num - 2)))
-_1=$("fibonacci" $(($num - 1)))
-"echo" "-ne" $(($_0 + $_1))
+"echo" "-ne" $(($("fibonacci" $(($num - 2))) + $("fibonacci" $(($num - 1)))))
 return
 fi
 fi
