@@ -48,7 +48,7 @@ ex = exists("file.txt")
 
 ```javascript
 a = 3;
-if (a > 2) {
+if a > 2 {
     println("Yes")
 } else if (a == 2) {
     println("No")
@@ -70,7 +70,7 @@ for i in list {
 n = 0
 i = 0
 j = 1
-while (n < 60) {
+while n < 60 {
     k = i + j
     i = j
     j = k
@@ -95,9 +95,9 @@ foo("Var")
 
 ```javascript
 func fibonacci(num) {
-    if (num == 0) {
+    if num == 0 {
         return 0
-    } else if (num == 1) {
+    } else if num == 1 {
         return 1
     } else {
         return fibonacci(num - 2) + fibonacci(num - 1)

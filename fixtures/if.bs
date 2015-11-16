@@ -1,5 +1,5 @@
 a = true;
-if (a) {
+if a {
     println("Yes")
 }
 ---
@@ -9,7 +9,7 @@ if [ "$a" == 1 ]; then
 fi
 ===
 a = 3;
-if (a > 2) {
+if a > 2 {
     println("Yes")
 } else if (a == 2) {
     println("No")
@@ -25,7 +25,7 @@ fi
 fi
 ===
 a = 3;
-if (a > 2) {
+if a > 2 {
     println("Yes")
 } else if (a == 2) {
     println("Maybe")

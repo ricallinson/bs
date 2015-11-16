@@ -26,5 +26,5 @@ func (this If) String() (string, NodeI) {
     if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
         check = " == 1"
     }
-    return "if [ " + str + check + " ]; then", node.Next()
+    return "if [ " + str + check + " ]; then", node
 }
