@@ -16,8 +16,7 @@ limitations under the License.
 
 package main
 
-// Token represents a lexical token.
-type Token int
+type Token int // Token represents a lexical token.
 
 const (
 	PREV               = false

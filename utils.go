@@ -28,24 +28,7 @@ func Lookup(ident string) Token {
     return IDENT
 }
 
-// true = Next, false = Prev
-func Find(t Token, n NodeI, dir bool) NodeI {
-    for n.Token() != ILLEGAL {
-        if n.Token() == t {
-            return n
-        }
-        if dir {
-            n = n.Next()
-        } else {
-            n = n.Prev()
-        }
-        if n == nil {
-            return nil
-        }
-    }
-    return nil
-}
-
+// Look back from the given node and return a 'function' node if the given node is with a 'function' block.
 func GetMyFunction(n NodeI) NodeI {
     for n.Token() != ILLEGAL {
         if n.Token() == IF || n.Token() == WHILE || n.Token() == FORIN {
@@ -61,6 +44,55 @@ func GetMyFunction(n NodeI) NodeI {
     return nil
 }
 
+// Look back from the given node and return an 'if' node if the given node is with a 'if' block.
+func GetMyIf(n NodeI) NodeI {
+    for n.Token() != ILLEGAL {
+        if n.Token() == FUNCTION || n.Token() == WHILE || n.Token() == FORIN {
+            return nil
+        } else if n.Token() == IF {
+            return n
+        }
+        n = n.Prev()
+        if n == nil {
+            return nil
+        }
+    }
+    return nil
+}
+
+// Look back from the given node and return an 'while' node if the given node is with a 'while' block.
+func GetMyWhile(n NodeI) NodeI {
+    for n.Token() != ILLEGAL {
+        if n.Token() == FUNCTION || n.Token() == IF || n.Token() == FORIN {
+            return nil
+        } else if n.Token() == WHILE {
+            return n
+        }
+        n = n.Prev()
+        if n == nil {
+            return nil
+        }
+    }
+    return nil
+}
+
+// Look back from the given node and return an 'for in' node if the given node is with a 'for in' block.
+func GetMyForIn(n NodeI) NodeI {
+    for n.Token() != ILLEGAL {
+        if n.Token() == FUNCTION || n.Token() == IF || n.Token() == WHILE {
+            return nil
+        } else if n.Token() == FORIN {
+            return n
+        }
+        n = n.Prev()
+        if n == nil {
+            return nil
+        }
+    }
+    return nil
+}
+
+// Is the given node and arithmetic operator.
 func IsArithmetic(n NodeI) bool {
     switch n.Token() {
     case ADD, SUB, DIV, MUL, LT, GT, LTE, GTE:
@@ -69,6 +101,7 @@ func IsArithmetic(n NodeI) bool {
     return false
 }
 
+// Look back to see if the given node is part of an arithmetic statement.
 func WasArithmetic(n NodeI) bool {
     for n.Token() != IF && n.Token() != WHILE && n.Token() != ILLEGAL {
         switch n.Token() {
@@ -83,26 +116,13 @@ func WasArithmetic(n NodeI) bool {
     return false
 }
 
+// Look back to see if the given node was in a function with a return.
 func WasReturn(n NodeI) bool {
-    for n.Token() != ILLEGAL {
+    for n.Token() != FUNCTION && n.Token() != ILLEGAL {
         if n.Token() == RETURN {
             return true
         }
         n = n.Next()
-        if n == nil {
-            return false
-        }
-    }
-    return false
-}
-
-
-func InArray(n NodeI) bool {
-    for n.Token() != EOL && n.Token() != ILLEGAL {
-        if n.Token() == LSQUARE {
-            return true
-        }
-        n = n.Prev()
         if n == nil {
             return false
         }

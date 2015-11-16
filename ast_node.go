@@ -16,6 +16,10 @@ limitations under the License.
 
 package main
 
+import(
+    // "fmt"
+)
+
 type NodeI interface {
     Ident(...string) string
     Token(...Token) Token
@@ -89,10 +93,7 @@ func (this *Node) String() (string, NodeI) {
     case FALSE:
         str = "$((0))"
     case COMMA:
-        if InArray(this) {
-            // If we are in an array function call then return a space.
-            str = " "
-        }
+        // Do nothing.
     case LSQUARE:
         str = "("
     case RSQUARE:

@@ -70,7 +70,7 @@ func (this Block) String() (string, NodeI) {
     if GetMyFunction(this) != nil {
         // If we are at the end of a function then print return.
         str += "}"
-    } else if Find(IF, this, PREV) != nil {
+    } else if GetMyIf(this) != nil {
         if this.Next().Token() != ELSE {
             // If we are at the end of a if block so count the total if then print an for each fi.
             for i := 0; i < CountIfs(this); i++ {
@@ -78,7 +78,7 @@ func (this Block) String() (string, NodeI) {
             }
             str = str[:len(str)-1]
         }
-    } else if Find(WHILE, this, PREV) != nil || Find(FORIN, this, PREV) != nil {
+    } else if GetMyWhile(this) != nil || GetMyForIn(this) != nil {
         // If we are at the end of a while block then print done.
         str += "done\n"
     }
