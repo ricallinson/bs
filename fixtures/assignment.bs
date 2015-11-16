@@ -1,6 +1,6 @@
 a = 1
 b = "string"
-c = [1, 2, "str", true, false]
+c = array(1, 2, "str", true, false)
 a = 1 + 2
 b = a * 7
 c = concat("Con", "cat")

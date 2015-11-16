@@ -133,6 +133,8 @@ func (this *Parser) ParseStatement(prev NodeI) error {
 		curr = &Call{&Node{}}
 	case BASH:
 		curr = &Bash{&Node{}}
+	case ARRAY:
+		curr = &Array{&Node{}}
 	case LBRACE:
 		// We create a node here to represent the block.
 		node := &Node{"", LBRACE, prev, nil}

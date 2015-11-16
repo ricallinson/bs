@@ -25,7 +25,7 @@ The syntax of bs is [go-based](https://en.wikipedia.org/wiki/Go_(programming_lan
 ```javascript
 a = 1
 b = "string"
-c = [1, 2, "str", true, false]
+c = array(1, 2, "str", true, false)
 ```
 
 ### Expression
@@ -121,7 +121,15 @@ Equals to `ls`.
 
 ### `exists(path)`
 
-Test existence of given path. 
+Test existence of given path.
+
+### `concat(str...)`
+
+Concatenates the given arguments and returns a string.
+
+### `array(arg...)`
+
+Returns an array of the given arguments.
 
 ## Inspiration
 

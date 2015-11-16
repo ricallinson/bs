@@ -79,6 +79,7 @@ const (
 	CONCAT             // concat
 	CALL               // call
 	BASH               // bash
+	ARRAY              // array
 )
 
 var keywords map[string]Token
@@ -100,6 +101,7 @@ func init() {
 	keywords["concat"] = CONCAT
 	keywords["call"] = CALL
 	keywords["bash"] = BASH
+	keywords["array"] = ARRAY
 }
 
 // Lookup returns the token associated with a given string.
@@ -413,6 +415,15 @@ func (this Block) String() (string, NodeI) {
 	return str, this.Next()
 }
 
+type Array struct {
+	*Node
+}
+
+func (this *Array) String() (string, NodeI) {
+	str, node := GetArgs(this.Next().Next(), " ")
+	return "(" + strings.TrimSpace(str) + ")", node
+}
+
 type Bash struct {
 	*Node
 }
@@ -512,7 +523,7 @@ func (this *Variable) String() (string, NodeI) {
 	}
 	// If we got here then then it is a normal variable so check the previous token to see whats going on.
 	switch this.Prev().Token() {
-	case 0, LBRACE, EOL:
+	case 0, EOL:
 		// If there is no parent, a { or an EOL then this must be the first var to be assigned.
 		str = this.Ident()
 	default:
