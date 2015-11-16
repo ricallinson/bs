@@ -37,6 +37,7 @@ const (
 	FUNCTION           // func
 	RETURN             // return
 	WHILE              // while
+	FORIN              // for in
 	IF                 // if
 	ELSE               // else
 	TRUE               // true
@@ -93,7 +94,6 @@ func init() {
 	keywords["true"] = TRUE
 	keywords["false"] = FALSE
 	keywords["return"] = RETURN
-	// Built-ins
 	keywords["print"] = PRINT
 	keywords["println"] = PRINTLN
 	keywords["ls"] = LS
@@ -102,6 +102,7 @@ func init() {
 	keywords["call"] = CALL
 	keywords["bash"] = BASH
 	keywords["array"] = ARRAY
+	keywords["for"] = FORIN
 }
 
 // Lookup returns the token associated with a given string.
@@ -355,7 +356,7 @@ type Block struct {
 
 func (this Block) String() (string, NodeI) {
 	var str string
-	if Find(IF, this, PREV) == nil && Find(WHILE, this, PREV) == nil {
+	if Find(FUNCTION, this, PREV) != nil {
 		str += " {"
 	}
 	// Check back to see if we are in a function, if we are then print out the function arguments here.
@@ -408,7 +409,7 @@ func (this Block) String() (string, NodeI) {
 			}
 			str = str[:len(str)-1]
 		}
-	} else if Find(WHILE, this, PREV) != nil {
+	} else if Find(WHILE, this, PREV) != nil || Find(FORIN, this, PREV) != nil {
 		// If we are at the end of a while block then print done.
 		str += "done\n"
 	}
@@ -483,6 +484,16 @@ func (this While) String() (string, NodeI) {
 		check = " == 1"
 	}
 	return "while [ " + str + check + " ]; do", node.Next()
+}
+
+type ForIn struct {
+	*Node
+}
+
+func (this ForIn) String() (string, NodeI) {
+	// Get the list.
+	l := this.Next().Next().Next().Ident() // for->var->in->
+	return "for " + this.Next().Ident() + " in ${" + l + "[@]}; do", this.Next().Next().Next().Next()
 }
 
 type If struct {

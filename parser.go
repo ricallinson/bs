@@ -129,6 +129,8 @@ func (this *Parser) ParseStatement(prev NodeI) error {
 		curr = &Else{&Node{}}
 	case WHILE:
 		curr = &While{&Node{}}
+	case FORIN:
+		curr = &ForIn{&Node{}}
 	case CALL:
 		curr = &Call{&Node{}}
 	case BASH:

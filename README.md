@@ -18,7 +18,7 @@ Bash Scripting is a simple programming language that compiles to Bash.
 
 ## Syntax
 
-The syntax of bs is [go-based](https://en.wikipedia.org/wiki/Go_(programming_language)) (derived from C programming language). If you have learned C, Java, C++ or JavaScript, bs is quite easy for you.
+The syntax of _bs_ is [C-based](https://en.wikipedia.org/wiki/List_of_C-family_programming_languages) (derived from C programming language). If you have learned C, Java, C++ or JavaScript, _bs_ is quite easy for you.
 
 ### Assignment
 
@@ -55,7 +55,16 @@ if (a > 2) {
 }
 ```
 
-### Loop
+### For in
+
+```javascript
+list = array(1, 2, 3)
+for i in list {
+    println(i)
+}
+```
+
+### While
 
 ```javascript
 n = 0

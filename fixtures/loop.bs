@@ -19,3 +19,23 @@ j="$k"
 n=$(($n + 1))
 "echo" "-e" "$k"
 done
+===
+list = array(1, 2, 3)
+for i in list {
+    println(i)
+}
+---
+list=($((1)) $((2)) $((3)))
+for i in ${list[@]}; do
+"echo" "-e" "$i"
+done
+===
+list = array("one", 2, "3.3")
+for i in list {
+    println(i)
+}
+---
+list=("one" $((2)) "3.3")
+for i in ${list[@]}; do
+"echo" "-e" "$i"
+done
