@@ -39,3 +39,25 @@ v1="Local ""$p"
 v2="V3 Modified."
 }
 "foo" "Var"
+===
+func readdir(path, ext) {
+    fliter = concat("*.", ext)
+    files = call("ls", path)
+    return files
+}
+println(readdir("./examples", "bs"))
+---
+function readdir {
+local fliter
+local files
+local files
+local path
+path="$1"
+local ext
+ext="$2"
+fliter="*.""$ext"
+files= "ls" "$path"
+"echo" "-ne" "$files"
+return
+}
+"echo" "-e" $("readdir" "./examples" "bs")

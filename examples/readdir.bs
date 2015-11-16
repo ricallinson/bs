@@ -1,0 +1,6 @@
+func readdir(path, ext) {
+    fliter = concat("*.", ext)
+    files = call("ls", path)
+    return files
+}
+println(readdir("./examples", "bs"))

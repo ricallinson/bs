@@ -18,7 +18,7 @@ limitations under the License.
 Based on https://github.com/influxdb/influxdb/blob/master/influxql/scanner.go
 */
 
-package bs
+package main
 
 import (
 	"bufio"

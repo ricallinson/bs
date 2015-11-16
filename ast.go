@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package bs
+package main
 
 import (
 	"fmt"
@@ -429,8 +429,8 @@ type Bash struct {
 }
 
 func (this *Bash) String() (string, NodeI) {
-	str := this.Next().Next().Ident() // bash->(->
-	return str, this.Next().Next().Next().Next()// bash->(->arg->)->
+	str := this.Next().Next().Ident()            // bash->(->
+	return str, this.Next().Next().Next().Next() // bash->(->arg->)->
 }
 
 type Call struct {
@@ -462,7 +462,7 @@ func (this *FunctionName) String() (string, NodeI) {
 	}
 	// If the function call is a value then it must be wrapped in $().
 	str := "$(\"" + this.Ident() + "\" "
-	s, node := GetArgs(this.Next().Next(), "") // foo->(->
+	s, node := GetArgs(this.Next().Next(), " ") // foo->(->
 	str += s
 	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
 		str = "$((" + str
