@@ -29,6 +29,12 @@ import (
 	"strings"
 )
 
+// eof is a marker code point to signify that the reader can't read any more.
+const eof = rune(0)
+
+// eol is a marker code point to for the end of a line.
+const eol = '\n'
+
 // Pos specifies the line and character position of a token.
 // The Char and Line are both zero-based indexes.
 type Pos struct {
@@ -88,6 +94,10 @@ func (s *Scanner) Scan() (tok Token, pos Pos, lit string) {
 	case '*':
 		return MUL, pos, ""
 	case '/':
+		if ch1, _ := s.r.read(); ch1 == '/' {
+			return s.scanComment() // Scan to the end of the line.
+		}
+		s.r.unread()
 		return DIV, pos, ""
 	case '=':
 		if ch1, _ := s.r.read(); ch1 == '~' {
@@ -323,6 +333,25 @@ func (s *Scanner) scanDigits() string {
 	return buf.String()
 }
 
+// scanString consumes a contiguous string of characters up to EOL.
+func (s *Scanner) scanComment() (Token, Pos, string) {
+	// Create a buffer and read the current character into it.
+	var buf bytes.Buffer
+	var ch rune
+	var pos Pos
+	// Read every subsequent character into the buffer, 'eol' will cause the loop to exit.
+	for {
+		ch, pos = s.r.read()
+		if ch == eol {
+			s.r.unread()
+			break
+		} else {
+			buf.WriteRune(ch)
+		}
+	}
+	return COMMENT, pos, buf.String()
+}
+
 // isWhitespace returns true if the rune is a space, tab.
 func isWhitespace(ch rune) bool { return ch == ' ' || ch == '\t' }
 
@@ -479,9 +508,6 @@ func (r *reader) curr() (ch rune, pos Pos) {
 	buf := &r.buf[i]
 	return buf.ch, buf.pos
 }
-
-// eof is a marker code point to signify that the reader can't read any more.
-const eof = rune(0)
 
 func ScanDelimited(r io.RuneScanner, start, end rune, escapes map[rune]rune, escapesPassThru bool) ([]byte, error) {
 	// Scan start delimiter.

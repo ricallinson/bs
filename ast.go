@@ -25,6 +25,7 @@ const (
 	EOF                // end of file
 	EOL                // end of line
 	WS                 // whitespace
+	COMMENT            // #
 	IDENT              //
 	NUMBER             // 12345.67
 	FUNCTION           // func
