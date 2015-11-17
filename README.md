@@ -6,6 +6,13 @@ __WARNING: IN PROGRESS__
 
 Bash Scripting is a simple programming language that compiles to Bash.
 
+## Todo
+
+* More tests
+* Indentation
+* Syntax checking
+* Import modules
+
 ## Use
 
 ### Execute Code
