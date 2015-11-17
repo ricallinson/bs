@@ -26,5 +26,9 @@ type Call struct {
 
 func (this *Call) String() (string, NodeI) {
 	args, node := GetArgs(this.Next().Next())
-	return strings.Join(args, " "), node
+	str := strings.Join(args, " ")
+	if this.Prev().Token() == EQ {
+		str = "$(" + str + ")"
+	}
+	return str, node
 }

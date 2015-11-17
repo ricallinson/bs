@@ -3,15 +3,17 @@ func indexOf(str, search) {
 }
 
 func readdir(path, ext) {
-    list = array()
+    list = array(1, 2)
     files = call("ls", path)
     fliter = concat(".", ext)
     for f in files {
-        if indexOf(f, fliter) > 0 {
-            list = append(f)
+        if indexOf(f, fliter) == 1 {
+            append(list, f)
         }
     }
     return list
 }
 
-println(readdir("./examples", "bs"))
+files = readdir("./", "bs")
+
+println(len(files))

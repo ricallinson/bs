@@ -43,5 +43,5 @@ func main() {
 		fmt.Print(s)
 		return
 	}
-	ExecuteScript(s)
+	fmt.Print(ExecuteScript(s))
 }
