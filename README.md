@@ -155,6 +155,10 @@ Returns an array of the given arguments.
 
 Returns the length of the given array.
 
+### `ls(dir)`
+
+Returns the files found at the given directory.
+
 ## Inspiration
 
 This project was inspired by [Batsh](https://github.com/BYVoid/Batsh).

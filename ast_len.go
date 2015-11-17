@@ -16,19 +16,11 @@ limitations under the License.
 
 package main
 
-import (
-	"strings"
-)
-
-type Call struct {
+type Len struct {
 	*Node
 }
 
-func (this *Call) String() (string, NodeI) {
-	args, node := GetArgs(this.Next().Next())
-	str := strings.Join(args, " ")
-	if this.Prev().Token() != EOL && this.Prev().Token() != ILLEGAL {
-		str = "$(" + str + ")"
-	}
-	return str, node
+func (this *Len) String() (string, NodeI) {
+	list := this.Next().Next().Ident() // len->(->
+	return "${#" + list + "[@]}", this.Next().Next().Next()
 }

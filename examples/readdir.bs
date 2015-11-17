@@ -1,19 +1,2 @@
-func indexOf(str, search) {
-    return 1
-}
-
-func readdir(path, ext) {
-    list = array(1, 2)
-    files = call("ls", path)
-    fliter = concat(".", ext)
-    for f in files {
-        if indexOf(f, fliter) == 1 {
-            append(list, f)
-        }
-    }
-    return list
-}
-
-files = readdir("./", "bs")
-
-println(len(files))
+source = ls("./examples")
+println(len(source))

@@ -20,15 +20,11 @@ import (
 	"strings"
 )
 
-type Call struct {
+type Ls struct {
 	*Node
 }
 
-func (this *Call) String() (string, NodeI) {
-	args, node := GetArgs(this.Next().Next())
-	str := strings.Join(args, " ")
-	if this.Prev().Token() != EOL && this.Prev().Token() != ILLEGAL {
-		str = "$(" + str + ")"
-	}
-	return str, node
+func (this *Ls) String() (string, NodeI) {
+	args, node := GetArgs(this.Next())
+	return "(`ls " + strings.Join(args, "") + "`)", node
 }

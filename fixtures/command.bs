@@ -35,6 +35,14 @@ a=$("echo" "foobar")
 +++
 foobar
 ===
+a = call("echo", "foobar")
+print(a)
+---
+a=$("echo" "foobar")
+"echo" "-ne" "$a"
++++
+foobar
+===
 bash("echo foobar")
 ---
 echo foobar

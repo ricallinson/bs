@@ -80,6 +80,7 @@ const (
 	ARRAY              // array
 	APPEND             // append
 	LEN                // len
+	LS                 // ls
 )
 
 var keywords map[string]Token
@@ -103,6 +104,7 @@ func init() {
 	keywords["for"] = FORIN
 	keywords["append"] = APPEND
 	keywords["len"] = LEN
+	keywords["ls"] = LS
 }
 
 // Lookup returns the token associated with a given string.
