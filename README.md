@@ -9,9 +9,10 @@ Bash Scripting is a simple programming language that compiles to Bash.
 ## Todo
 
 * More tests
-* Indentation
+* Support for expressions in `while` and `for in`.
 * Syntax checking
 * Import modules
+* Pretty printing output script
 
 ## Use
 
