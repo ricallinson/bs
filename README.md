@@ -20,6 +20,13 @@ Bash Scripting is a simple programming language that compiles to Bash.
 
 The syntax of _bs_ is [C-based](https://en.wikipedia.org/wiki/List_of_C-family_programming_languages) (derived from C programming language). If you have learned C, Java, C++ or JavaScript, _bs_ is quite easy for you.
 
+### Comments
+
+```javascript
+// This is a comment about your "code".
+print("foo")
+```
+
 ### Assignment
 
 ```javascript
