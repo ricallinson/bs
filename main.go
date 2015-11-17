@@ -22,6 +22,14 @@ import (
 	"os/exec"
 )
 
+func ExecuteScript(script string) string {
+	out, err := exec.Command("bash", "-c", script).Output()
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return string(out)
+}
+
 func main() {
 	var script = flag.Bool("script", false, "print the parsed script")
 	flag.Parse()
@@ -35,9 +43,5 @@ func main() {
 		fmt.Print(s)
 		return
 	}
-	out, err := exec.Command("bash", "-c", s).Output()
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
-	fmt.Print(string(out))
+	ExecuteScript(s)
 }

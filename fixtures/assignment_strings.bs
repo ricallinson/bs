@@ -1,7 +1,15 @@
 a = "foo"
+print(a)
 ---
 a="foo"
+"echo" "-ne" "$a"
++++
+foo
 ===
 a = concat("foo", "bar")
+print(a)
 ---
 a="foo""bar"
+"echo" "-ne" "$a"
++++
+foobar

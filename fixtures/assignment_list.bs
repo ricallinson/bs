@@ -1,3 +1,7 @@
 c = array(1, 2, "str", true, false)
+print(c)
 ---
 c=($((1)) $((2)) "str" $((1)) $((0)))
+"echo" "-ne" "$c"
++++
+0

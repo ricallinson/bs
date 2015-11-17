@@ -6,8 +6,8 @@ while n < 60 {
     i = j
     j = k
     n = n + 1
-    println(k)
 }
+print(k)
 ---
 n=$((0))
 i=$((0))
@@ -17,25 +17,32 @@ k=$(($i+$j))
 i="$j"
 j="$k"
 n=$(($n+1))
-"echo" "-e" "$k"
 done
+
+"echo" "-ne" "$k"
++++
+2504730781961
 ===
 list = array(1, 2, 3)
 for i in list {
-    println(i)
+    print(i)
 }
 ---
 list=($((1)) $((2)) $((3)))
 for i in ${list[@]}; do
-"echo" "-e" "$i"
+"echo" "-ne" "$i"
 done
++++
+123
 ===
 list = array("one", 2, "3.3")
 for i in list {
-    println(i)
+    print(i)
 }
 ---
 list=("one" $((2)) "3.3")
 for i in ${list[@]}; do
-"echo" "-e" "$i"
+"echo" "-ne" "$i"
 done
++++
+one23.3

@@ -7,7 +7,7 @@ func fibonacci(num) {
         return fibonacci(num - 2) + fibonacci(num - 1)
     }
 }
-println(fibonacci(8))
+print(fibonacci(8))
 ---
 function fibonacci {
 local num
@@ -25,4 +25,6 @@ return
 fi
 fi
 }
-"echo" "-e" $("fibonacci" $((8)))
+"echo" "-ne" $("fibonacci" $((8)))
++++
+21

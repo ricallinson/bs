@@ -1,22 +1,37 @@
 output = ls()
 ex = exists("file.txt")
+print(ex)
 ---
 output=$("ls")
 [ -e "file.txt" ]
 ex=$((!$?))
+"echo" "-ne" "$ex"
++++
+0
 ===
 println("foo")
 ---
 "echo" "-e" "foo"
++++
+foo
+
 ===
 print("foo")
 ---
 "echo" "-ne" "foo"
++++
+foo
 ===
-call("curl", "-I", "http://yahoo.com/")
+call("echo", "foobar")
 ---
-"curl" "-I" "http://yahoo.com/"
+"echo" "foobar"
++++
+foobar
+
 ===
-bash("ps aux")
+bash("echo foobar")
 ---
-ps aux
+echo foobar
++++
+foobar
+

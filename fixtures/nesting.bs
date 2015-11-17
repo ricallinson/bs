@@ -1,17 +1,39 @@
-func readdir(path) {
-    files = call("ls", path)
-    for f in files {
-        println(f)
+func foo(count) {
+    str = ""
+    list = array("a", "b", "c")
+    while count > 0 {
+        if count / 2 {
+            for i in list {
+                str = concat(str, i, " ")
+            }
+        }
+        count = count - 1
     }
+    return str
 }
+print(foo("100"))
 ---
-function readdir {
-local files
-local path
-path="$1"
-files="ls" "$path"
-for f in ${files[@]}; do
-"echo" "-e" "$f"
+function foo {
+local str
+local list
+local str
+local count
+count="$1"
+str=""
+list=("a" "b" "c")
+while [ $(($count > 0)) == 1 ]; do
+if [ $(($count / 2)) == 1 ]; then
+for i in ${list[@]}; do
+str="$str""$i"" "
 done
 
+fi
+count=$(($count-1))
+done
+
+"echo" "-ne" "$str"
+return
 }
+"echo" "-ne" $("foo" "100")
++++
+a b c a b c

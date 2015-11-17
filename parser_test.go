@@ -38,8 +38,19 @@ func TestApplication(t *testing.T) {
 				for i, test := range tests {
 					It(fmt.Sprintf("%s - %d", filepath, i+1), func() {
 						p := strings.Split(string(test), "---")
-						s := ParseString(p[0])
-						AssertEqual(strings.TrimSpace(s), strings.TrimSpace(p[1]))
+						bs := p[0]
+						p = strings.Split(string(p[1]), "+++")
+						sh := p[0]
+						op := p[1]
+						s := ParseString(bs)
+						AssertEqual(strings.TrimSpace(s), strings.TrimSpace(sh))
+						o := ExecuteScript(s)
+						if len(strings.TrimSpace(op)) > 0 {
+							// Remove the new line at the start and end of the output test.
+							AssertEqual(o, op[1:len(op)-1])
+						} else {
+							AssertEqual("Missing execution test.", "")
+						}
 					})
 				}
 			}
