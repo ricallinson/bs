@@ -23,6 +23,10 @@ import (
 	"strings"
 )
 
+const (
+	INDENT = "    "
+)
+
 // Parser represents a parser.
 type Parser struct {
 	s   *Scanner
@@ -90,62 +94,61 @@ func (this *Parser) Parse(n ...NodeI) (NodeI, error) {
 	if len(n) == 1 {
 		root = n[0]
 	} else {
-		root = &Node{}
+		root = &Node{parser: this}
 	}
-	if err := this.ParseStatement(root); err != nil {
+	if err := this.parseStatement(root); err != nil {
 		return nil, err
 	}
 	return root, nil
 }
 
 // Parse parses a statement.
-func (this *Parser) ParseStatement(prev NodeI) error {
-	var curr NodeI
+func (this *Parser) parseStatement(prev NodeI) error {
+	var node *Node = &Node{parser: this}
 	tok, lit := this.scanIgnoreWhitespace()
 	if tok == EOF || tok == RBRACE {
-		curr = &Node{}
-		curr.Token(tok)
-		curr.Prev(prev)
-		prev.Next(curr)
+		node.Token(tok)
+		node.Prev(prev)
+		prev.Next(node)
 		return nil
 	}
-
+	var curr NodeI
 	switch tok {
 	case IDENT:
-		curr = &Variable{&Node{}}
+		curr = &Variable{node}
 		// Check if the ident is a function, if so return a function name.
 		if ok, _ := this.funcs[lit]; ok {
-			curr = &FunctionName{&Node{}}
+			curr = &FunctionName{node}
 		}
 	case NUMBER:
-		curr = &Integer{&Node{}}
+		curr = &Integer{node}
 	case STRING:
-		curr = &String{&Node{}}
+		curr = &String{node}
 	case FUNCTION:
-		curr = &Function{&Node{}}
+		curr = &Function{node}
 	case IF:
-		curr = &If{&Node{}}
+		curr = &If{node}
 	case ELSE:
-		curr = &Else{&Node{}}
+		curr = &Else{node}
 	case WHILE:
-		curr = &While{&Node{}}
+		curr = &While{node}
 	case FORIN:
-		curr = &ForIn{&Node{}}
+		curr = &ForIn{node}
 	case CALL:
-		curr = &Call{&Node{}}
+		curr = &Call{node}
 	case BASH:
-		curr = &Bash{&Node{}}
+		curr = &Bash{node}
 	case ARRAY:
-		curr = &Array{&Node{}}
+		curr = &Array{node}
 	case COMMENT:
-		curr = &Comment{&Node{}}
+		curr = &Comment{node}
 	case LBRACE:
 		// We create a node here to represent the block.
-		node := &Node{"", LBRACE, prev, nil}
-		block, _ := this.Parse(node)
-		curr = &Block{&Node{}, block}
+		n := &Node{this, "", LBRACE, prev, nil}
+		block, _ := this.Parse(n)
+		curr = &Block{node, block}
 	default:
-		curr = &Node{}
+		curr = node
 	}
 
 	curr.Ident(lit)
@@ -160,7 +163,7 @@ func (this *Parser) ParseStatement(prev NodeI) error {
 		this.funcs[curr.Ident()] = true
 	}
 
-	return this.ParseStatement(curr)
+	return this.parseStatement(curr)
 }
 
 // scan returns the next token from the underlying scanner.

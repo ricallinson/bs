@@ -17,10 +17,10 @@ limitations under the License.
 package main
 
 type Comment struct {
-    *Node
+	*Node
 }
 
 func (this Comment) String() (string, NodeI) {
-    str := "#" + this.Ident()
-    return str, this.Next()
+	str := "#" + this.Ident()
+	return str, this.Next()
 }

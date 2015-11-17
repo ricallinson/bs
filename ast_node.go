@@ -25,10 +25,11 @@ type NodeI interface {
 }
 
 type Node struct {
-	ident string
-	token Token
-	prev  NodeI
-	next  NodeI
+	parser *Parser
+	ident  string
+	token  Token
+	prev   NodeI
+	next   NodeI
 }
 
 func (this *Node) Ident(v ...string) string {
