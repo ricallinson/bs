@@ -1,7 +1,43 @@
-c = array(20, 1, 2, true, false)
+c = array(1, 2, "three", true, false)
 print(c)
 ---
-c=($((20)) $((1)) $((2)) $((1)) $((0)))
+c=($((1)) $((2)) "three" $((1)) $((0)))
 "echo" "-ne" "$c"
 +++
-20
+1
+===
+c = array(1, 2, "three", true, false)
+print(c[2])
+---
+c=($((1)) $((2)) "three" $((1)) $((0)))
+"echo" "-ne" "${c[2]}"
++++
+three
+===
+c = array(1, 2, "three", true, false)
+print(c[4 - 2])
+---
+c=($((1)) $((2)) "three" $((1)) $((0)))
+"echo" "-ne" "${c[4 - 2]}"
++++
+three
+===
+a = 2
+c = array(1, 2, "three", true, false)
+print(c[a])
+---
+a=$((2))
+c=($((1)) $((2)) "three" $((1)) $((0)))
+"echo" "-ne" "${c["$a"]}"
++++
+three
+===
+a = 4
+c = array(1, 2, "three", true, false)
+print(c[a - 2])
+---
+a=$((4))
+c=($((1)) $((2)) "three" $((1)) $((0)))
+"echo" "-ne" "${c["$a" - 2]}"
++++
+three

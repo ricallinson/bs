@@ -18,6 +18,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 type Variable struct {
@@ -32,6 +33,12 @@ func (this *Variable) String() (string, NodeI) {
 		str = "[ -e " + param + " ]\n" + this.Ident() + "=$((!$?))"
 		return str, this.Next().Next().Next().Next().Next()
 	}
+	// Is this variable a list with an index?
+	if this.Next().Token() == LSQUARE {
+		args, node := GetArgs(this.Next())
+		index := strings.Join(args, " ")
+		return "\"${" + this.Ident() + "[" + index + "]}\"", node
+	}
 	// If we got here then then it is a normal variable so check the previous token to see whats going on.
 	switch this.Prev().Token() {
 	case 0, EOL:
@@ -39,9 +46,9 @@ func (this *Variable) String() (string, NodeI) {
 		str = this.Ident()
 	default:
 		// Are there any operators that makes this variable a number?
-		if IsArithmetic(this.Prev()) == false && IsArithmetic(this.Next()) {
+		if IsArithmetic(this.Prev()) == false && IsArithmetic(this.Next()) && this.Prev().Token() != LSQUARE {
 			str = fmt.Sprintf("$(($%s", this.Ident())
-		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) == false {
+		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) == false && this.Next().Token() != RSQUARE {
 			str = fmt.Sprintf("$%s))", this.Ident())
 		} else if IsArithmetic(this.Prev()) && IsArithmetic(this.Next()) {
 			str = fmt.Sprintf("$%s", this.Ident())

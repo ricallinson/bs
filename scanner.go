@@ -148,7 +148,7 @@ func (s *Scanner) Scan() (tok Token, pos Pos, lit string) {
 		return COLON, pos, ""
 	}
 
-	return ILLEGAL, pos, string(ch0)
+	return ILLEGAL, pos, "E:" + string(ch0)
 }
 
 // scanWhitespace consumes the current rune and all contiguous whitespace.

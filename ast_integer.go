@@ -22,11 +22,11 @@ type Integer struct {
 
 func (this Integer) String() (string, NodeI) {
 	var str string
-	if IsArithmetic(this.Prev()) == false {
+	if IsArithmetic(this.Prev()) == false && this.Prev().Token() != LSQUARE {
 		str = "$(("
 	}
 	str += this.Ident()
-	if IsArithmetic(this.Next()) == false {
+	if IsArithmetic(this.Next()) == false && this.Next().Token() != RSQUARE {
 		str += "))"
 	}
 	return str, this.Next()

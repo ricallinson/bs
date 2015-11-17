@@ -16,6 +16,10 @@ limitations under the License.
 
 package main
 
+import (
+// "fmt"
+)
+
 // Is the given node and arithmetic operator.
 func IsArithmetic(n NodeI) bool {
 	switch n.Token() {

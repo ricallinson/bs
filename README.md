@@ -40,6 +40,7 @@ print("foo")
 a = 1
 b = "string"
 c = array(1, 2, "str", true, false)
+d = c[2]
 ```
 
 ### Expression
