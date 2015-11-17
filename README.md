@@ -151,6 +151,10 @@ Concatenates the given arguments and returns a string.
 
 Returns an array of the given arguments.
 
+### `len(array)`
+
+Returns the length of the given array.
+
 ## Inspiration
 
 This project was inspired by [Batsh](https://github.com/BYVoid/Batsh).

@@ -79,6 +79,7 @@ const (
 	BASH               // bash
 	ARRAY              // array
 	APPEND             // append
+	LEN                // len
 )
 
 var keywords map[string]Token
@@ -101,6 +102,7 @@ func init() {
 	keywords["array"] = ARRAY
 	keywords["for"] = FORIN
 	keywords["append"] = APPEND
+	keywords["len"] = LEN
 }
 
 // Lookup returns the token associated with a given string.
