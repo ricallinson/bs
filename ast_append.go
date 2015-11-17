@@ -20,11 +20,15 @@ import (
 	"strings"
 )
 
-type Array struct {
+type Append struct {
 	*Node
 }
 
-func (this *Array) String() (string, NodeI) {
-	args, node := GetArgs(this.Next().Next())
-	return "(" + strings.Join(args, " ") + ")", node
+func (this *Append) String() (string, NodeI) {
+	var str string
+	args, node := GetArgs(this.Next())
+	for _, arg := range args[1:] {
+		str += this.Next().Next().Ident() + "+=(" + arg + ")\n"
+	}
+	return strings.TrimSpace(str), node
 }

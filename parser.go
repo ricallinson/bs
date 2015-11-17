@@ -142,6 +142,8 @@ func (this *Parser) parseStatement(prev NodeI) error {
 		curr = &Array{node}
 	case COMMENT:
 		curr = &Comment{node}
+	case APPEND:
+		curr = &Append{node}
 	case LBRACE:
 		// We create a node here to represent the block.
 		n := &Node{this, "", LBRACE, prev, nil}

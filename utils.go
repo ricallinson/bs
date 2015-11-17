@@ -58,8 +58,8 @@ func CountVariables(n NodeI) int {
 
 // Get the function arguments by consuming all following nodes
 // until the close of the function bracket or a { is found.
-func GetArgs(n NodeI, sep string) (string, NodeI) {
-	var str string
+func GetArgs(n NodeI) ([]string, NodeI) {
+	var args []string
 	var s string
 	count := 1
 	for n != nil && n.Token() != LBRACE && count > 0 {
@@ -70,8 +70,8 @@ func GetArgs(n NodeI, sep string) (string, NodeI) {
 			count--
 		}
 		if len(s) > 0 {
-			str += sep + s
+			args = append(args, s)
 		}
 	}
-	return str, n
+	return args, n
 }

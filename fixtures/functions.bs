@@ -56,7 +56,7 @@ path="$1"
 local ext
 ext="$2"
 fliter="*.""$ext"
-files= "ls" "$path"
+files="ls" "$path"
 "echo" "-ne" "$files"
 return
 }

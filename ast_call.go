@@ -16,11 +16,15 @@ limitations under the License.
 
 package main
 
+import (
+	"strings"
+)
+
 type Call struct {
 	*Node
 }
 
 func (this *Call) String() (string, NodeI) {
-	str, node := GetArgs(this.Next().Next(), " ")
-	return str, node
+	args, node := GetArgs(this.Next().Next())
+	return strings.Join(args, " "), node
 }

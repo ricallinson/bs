@@ -21,6 +21,6 @@ type Function struct {
 }
 
 func (this *Function) String() (string, NodeI) {
-	_, node := GetArgs(this.Next().Next(), "") // func->name->(
+	_, node := GetArgs(this.Next().Next()) // func->name->(
 	return "function " + this.Next().Ident(), node.Next()
 }

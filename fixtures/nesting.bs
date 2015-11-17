@@ -9,7 +9,7 @@ function readdir {
 local files
 local path
 path="$1"
-files= "ls" "$path"
+files="ls" "$path"
 for f in ${files[@]}; do
 "echo" "-e" "$f"
 done

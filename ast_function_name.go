@@ -16,6 +16,10 @@ limitations under the License.
 
 package main
 
+import (
+	"strings"
+)
+
 type FunctionName struct {
 	*Node
 }
@@ -26,9 +30,9 @@ func (this *FunctionName) String() (string, NodeI) {
 		return "\"" + this.Ident() + "\" ", this.Next()
 	}
 	// Otherwise the function call is a value then it must be wrapped in '$("")'.
-	str := "$(\"" + this.Ident() + "\""
-	s, node := GetArgs(this.Next().Next(), " ") // foo->(->
-	str += s
+	str := "$(\"" + this.Ident() + "\" "
+	args, node := GetArgs(this.Next().Next()) // foo->(->
+	str += strings.Join(args, " ")
 	// If the function call is part of some arithmetic then is must be wrapped again in '$(())'.
 	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
 		str = "$((" + str

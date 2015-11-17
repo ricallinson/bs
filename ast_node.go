@@ -68,23 +68,23 @@ func (this *Node) String() (string, NodeI) {
 	case EQ:
 		str = "="
 	case ADD:
-		str = " + "
+		str = "+"
 	case SUB:
-		str = " - "
+		str = "-"
 	case MUL:
-		str = " * "
+		str = "*"
 	case DIV:
-		str = " / "
+		str = "/"
 	case LT:
-		str = " < "
+		str = "<"
 	case GT:
-		str = " > "
+		str = ">"
 	case LTE:
-		str = " <= "
+		str = "<="
 	case GTE:
-		str = " >= "
+		str = ">="
 	case EEQ:
-		str = " == "
+		str = "=="
 	case TRUE:
 		str = "$((1))"
 	case FALSE:

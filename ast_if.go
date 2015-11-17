@@ -16,12 +16,17 @@ limitations under the License.
 
 package main
 
+import (
+	"strings"
+)
+
 type If struct {
 	*Node
 }
 
 func (this If) String() (string, NodeI) {
-	str, node := GetArgs(this.Next(), "") // if->(
+	args, node := GetArgs(this.Next()) // if->(
+	str := strings.Join(args, " ")
 	check := ""
 	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
 		check = " == 1"

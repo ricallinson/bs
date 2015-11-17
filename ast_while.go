@@ -16,12 +16,17 @@ limitations under the License.
 
 package main
 
+import (
+	"strings"
+)
+
 type While struct {
 	*Node
 }
 
 func (this While) String() (string, NodeI) {
-	str, node := GetArgs(this.Next(), "") // while->(
+	args, node := GetArgs(this.Next()) // while->(
+	str := strings.Join(args, " ")
 	check := ""
 	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
 		check = " == 1"
