@@ -16,7 +16,6 @@ print(foo("100"))
 function foo {
 local str
 local list
-local str
 local count
 count="$1"
 str=""

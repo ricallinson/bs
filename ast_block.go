@@ -98,6 +98,8 @@ func (this Block) GetArguments(n NodeI) string {
 	i := 1                         // Count the given arguments.
 	for args.Token() != LBRACE {   // function->foo->(->...)->{<-
 		if args.Token() == IDENT {
+			// local v
+			// v=$i
 			argsList[args.Ident()] = true
 			strArgs += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", args.Ident(), args.Ident(), i)
 			i++
@@ -107,8 +109,9 @@ func (this Block) GetArguments(n NodeI) string {
 	// Search the block for variables and then check if they should be local.
 	_, local := this.block.String()
 	for local != nil {
-		if local.Token() == IDENT {
+		if local.Prev().Token() == EOL && local.Token() == IDENT {
 			if ok := argsList[local.Ident()]; ok == false {
+				// local v
 				strLocal += "\nlocal " + local.Ident()
 			}
 		}
