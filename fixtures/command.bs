@@ -1,8 +1,6 @@
-output = ls()
 ex = exists("file.txt")
 print(ex)
 ---
-output=$("ls")
 [ -e "file.txt" ]
 ex=$((!$?))
 "echo" "-ne" "$ex"

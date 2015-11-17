@@ -138,10 +138,6 @@ Runs command from path through the bash shell.
 
 Put `rawStatement` into compiled code for Bash.
 
-### `ls(path)`
-
-Equals to `ls`.
-
 ### `exists(path)`
 
 Test existence of given path.

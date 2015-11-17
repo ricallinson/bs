@@ -73,7 +73,6 @@ const (
 	DOT                // .
 	PRINT              // print
 	PRINTLN            // println
-	LS                 // ls
 	EXISTS             // exists
 	CONCAT             // concat
 	CALL               // call
@@ -95,7 +94,6 @@ func init() {
 	keywords["return"] = RETURN
 	keywords["print"] = PRINT
 	keywords["println"] = PRINTLN
-	keywords["ls"] = LS
 	keywords["exists"] = EXISTS
 	keywords["concat"] = CONCAT
 	keywords["call"] = CALL

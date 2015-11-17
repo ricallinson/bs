@@ -95,8 +95,6 @@ func (this *Node) String() (string, NodeI) {
 		str = "("
 	case RSQUARE:
 		str = ")"
-	case LS:
-		str = "$(\"ls\")"
 	case PRINT:
 		str = "\"echo\" \"-ne\" "
 	case PRINTLN:
