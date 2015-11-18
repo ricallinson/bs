@@ -25,6 +25,6 @@ type Array struct {
 }
 
 func (this *Array) String() (string, NodeI) {
-	args, node := GetArgs(this.Next().Next())
+	args, node := GetArgs(this.Next())
 	return "(" + strings.Join(args, " ") + ")", node
 }

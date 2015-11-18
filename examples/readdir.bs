@@ -1,2 +1,43 @@
-source = ls("./examples")
-println(len(source))
+func length(str) {
+    return bash("${#str}")
+}
+
+func strToArray(str) {
+    return bash("$str | grep -o .")
+}
+
+func indexChar(str, char) {
+    index = 0
+    s = strToArray(str)
+    for i in s {
+        if i == char {
+            return index
+        }
+        index = index + 1
+    }
+    return -1
+}
+
+func index(str, sep) {
+    strLen = length(str)
+    sepLen = length(sep)
+    if strLen == 0 {
+        return 0
+    } else if strLen == 1 {
+        return indexChar(str, sep)
+    } else if sepLen == strLen {
+        if str == sep {
+            return 0
+        }
+        return -1
+    } else if sepLen > strLen {
+        return -1
+    }
+    return -1
+}
+
+s = array()
+
+println(indexChar("Some string", "s"))
+println(indexChar("Some string", "S"))
+println(index("Some string", "str"))
