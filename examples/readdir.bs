@@ -3,6 +3,7 @@ func length(str) {
 }
 
 func strToArray(str) {
+    // This method does not take into account spaces...
     return bash("$str | grep -o .")
 }
 

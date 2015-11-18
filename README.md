@@ -122,6 +122,15 @@ func fibonacci(num) {
 println(fibonacci(8))
 ```
 
+### Modules
+
+__NOT IMPLEMENTED__
+
+```javascript
+import("./path/to/module/foo")
+foo.function()
+```
+
 ## Built-in functions
 
 ### `print(text, ...)`
