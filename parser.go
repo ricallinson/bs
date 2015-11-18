@@ -19,12 +19,10 @@ package main
 import (
 	// "fmt"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
-)
-
-const (
-	INDENT = "    "
+	"path"
 )
 
 // Parser represents a parser.
@@ -36,6 +34,7 @@ type Parser struct {
 		n   int    // buffer size (max=1)
 	}
 	funcs map[string]bool
+	module []string
 }
 
 // NewParser returns a new instance of Parser.
@@ -64,9 +63,28 @@ func ParseString(in string) string {
 	return p.ParseToString()
 }
 
-func ParseFile(path string) string {
+func ParseFile(path string, module... string) string {
 	p := NewParserFromFile(path)
+	p.Module(module...)
 	return p.ParseToString()
+}
+
+func ParseDir(dir string, module... string) string {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		panic(err)
+	}
+	module = append(module, path.Base(dir))
+	var str string
+	for _, file := range files {
+		absPath := path.Join(dir, file.Name())
+		if file.IsDir() {
+			str += "\n" + ParseDir(absPath, module...)
+		} else {
+			str += ParseFile(absPath, module...)
+		}
+	}
+	return str
 }
 
 func (this *Parser) ParseToString() string {
@@ -83,6 +101,17 @@ func (this *Parser) ParseToString() string {
 		str += s
 	}
 	return str
+}
+
+func (this *Parser) Module(m... string) string {
+	if len(m) > 0 {
+		this.module = m
+	}
+	module := strings.Join(this.module, "_")
+	if len(module) > 0 {
+		module = module + "_"
+	}
+	return module
 }
 
 // Parse parses a scripter string and returns a slice of statment AST objects.
@@ -148,9 +177,17 @@ func (this *Parser) parseStatement(prev NodeI) error {
 		curr = &Len{node}
 	case LS:
 		curr = &Ls{node}
+	case IMPORT:
+		curr = &Import{node}
 	case LBRACE:
 		// We create a node here to represent the block.
-		n := &Node{this, "", LBRACE, prev, nil}
+		n := &Node{
+			parser: this,
+			ident: "",
+			token: LBRACE,
+			prev: prev,
+			next: nil,
+		}
 		block, _ := this.Parse(n)
 		curr = &Block{node, block}
 	default:
@@ -164,7 +201,7 @@ func (this *Parser) parseStatement(prev NodeI) error {
 
 	if prev.Token() == FUNCTION {
 		if ok, _ := this.funcs[curr.Ident()]; ok {
-			panic("function " + curr.Ident() + " already defined")
+			panic("function " + curr.Ident() + " already defined.")
 		}
 		this.funcs[curr.Ident()] = true
 	}

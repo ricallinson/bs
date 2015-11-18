@@ -17,7 +17,8 @@ limitations under the License.
 package main
 
 import (
-// "fmt"
+	// "fmt"
+	// "strings"
 )
 
 // Is the given node and arithmetic operator.
@@ -58,6 +59,19 @@ func CountVariables(n NodeI) int {
 		}
 	}
 	return i
+}
+
+func GetModuleIdent(n NodeI) (string, NodeI) {
+	var variable string
+	for n.Token() == IDENT || n.Token() == DOT {
+		if n.Token() == IDENT {
+			variable += n.Ident()
+		} else if n.Token() == DOT {
+			variable += "_"
+		}
+		n = n.Next()
+	}
+	return n.Module() + variable, n
 }
 
 // Get the function arguments by consuming all following nodes

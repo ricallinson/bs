@@ -17,6 +17,7 @@ limitations under the License.
 package main
 
 type NodeI interface {
+	Module() string
 	Ident(...string) string
 	Token(...Token) Token
 	Prev(...NodeI) NodeI
@@ -30,6 +31,10 @@ type Node struct {
 	token  Token
 	prev   NodeI
 	next   NodeI
+}
+
+func (this *Node) Module() string {
+	return this.parser.Module()
 }
 
 func (this *Node) Ident(v ...string) string {

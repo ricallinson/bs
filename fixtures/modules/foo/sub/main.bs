@@ -1,0 +1,4 @@
+foo = "bar"
+func get() {
+    return foo
+}

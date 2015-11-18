@@ -25,19 +25,25 @@ type FunctionName struct {
 }
 
 func (this *FunctionName) String() (string, NodeI) {
-	// If the line stars with a function then print it out.
+	// Get the full variable name.
+	ident, next := GetModuleIdent(this)
+	// If the line starts with the function call then print it out.
 	if this.Prev().Token() == EOL || this.Prev().Token() == ILLEGAL {
-		return "\"" + this.Ident() + "\" ", this.Next()
+		return "\"" + ident + "\" ", next
 	}
-	// Otherwise the function call is a value then it must be wrapped in '$("")'.
-	str := "$(\"" + this.Ident() + "\" "
-	args, node := GetArgs(this.Next().Next()) // foo->(->
+	// Otherwise the function call is a value and it must be wrapped in '$("")'.
+	str := "$(\"" + ident + "\""
+	var args []string
+	args, next = GetArgs(next.Next()) // foo->(->
+	if len(args) > 0 {
+		str += " "
+	}
 	str += strings.Join(args, " ")
 	// If the function call is part of some arithmetic then is must be wrapped again in '$(())'.
-	if IsArithmetic(this.Prev()) == false && IsArithmetic(node.Next()) {
+	if IsArithmetic(this.Prev()) == false && IsArithmetic(next.Next()) {
 		str = "$((" + str
-	} else if IsArithmetic(this.Prev()) && IsArithmetic(node.Next()) == false {
+	} else if IsArithmetic(this.Prev()) && IsArithmetic(next.Next()) == false {
 		str += "))"
 	}
-	return str + ")", node.Next()
+	return str + ")", next
 }

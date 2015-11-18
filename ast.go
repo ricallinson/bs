@@ -81,6 +81,7 @@ const (
 	APPEND             // append
 	LEN                // len
 	LS                 // ls
+	IMPORT // import
 )
 
 var keywords map[string]Token
@@ -105,6 +106,7 @@ func init() {
 	keywords["append"] = APPEND
 	keywords["len"] = LEN
 	keywords["ls"] = LS
+	keywords["import"] = IMPORT
 }
 
 // Lookup returns the token associated with a given string.

@@ -1,0 +1,25 @@
+import("./fixtures/modules/foo")
+foo = "bar"
+func get() {
+    return foo
+}
+print(get())
+print(foo.get())
+print(foo.sub.get())
+---
+foo_foo="bar"
+function foo_get {
+"echo" "-ne" "$foo_foo"
+return
+}
+foo_sub_foo="bar"
+function foo_sub_get {
+"echo" "-ne" "$foo_foo_sub_foo"
+return
+}
+
+
+"echo" "-ne" "$foo_get"
+"echo" "-ne" "$foo_sub_get"
++++
+barbarbar

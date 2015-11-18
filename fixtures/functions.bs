@@ -7,7 +7,7 @@ function foo {
 "echo" "-ne" $((1))
 return
 }
-"echo" "-ne" $("foo" )
+"echo" "-ne" $("foo")
 +++
 1
 ===
