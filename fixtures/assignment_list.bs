@@ -41,11 +41,3 @@ c=($((1)) $((2)) "three" $((1)) $((0)))
 "echo" "-ne" "${c["$a" - 2]}"
 +++
 three
-===
-c = array(1, 2, "three", true, false)
-print(len(c))
----
-c=($((1)) $((2)) "three" $((1)) $((0)))
-"echo" "-ne" ${#c[@]}
-+++
-5

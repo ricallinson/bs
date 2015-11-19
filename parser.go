@@ -182,10 +182,6 @@ func (this *Parser) parseStatement(prev NodeI) error {
 		curr = &Comment{node}
 	case APPEND:
 		curr = &Append{node}
-	case LEN:
-		curr = &Len{node}
-	case LS:
-		curr = &Ls{node}
 	case IMPORT:
 		curr = &Import{node}
 	case LBRACE:
