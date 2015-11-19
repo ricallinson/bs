@@ -28,7 +28,7 @@ import (
 func TestApplication(t *testing.T) {
 
 	Describe("File tests", func() {
-		dir := "./fixtures"
+		dir := "./tests"
 		files, _ := ioutil.ReadDir(dir)
 		for _, file := range files {
 			if name := file.Name(); strings.HasSuffix(name, ".bs") {

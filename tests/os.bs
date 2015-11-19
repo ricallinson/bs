@@ -1,0 +1,26 @@
+import("./modules/os")
+os.testprint("foo")
+---
+function os_exec {
+local os_bin
+os_bin="$1"
+local os_args
+os_args="$2"
+"$os_bin" "$os_args"
+}
+
+function os_testprint {
+local os_str
+os_str="$1"
+"echo" "-ne" "$os_str"
+}
+
+function os_testprintln {
+local os_str
+os_str="$1"
+"echo" "-ne" "$os_str"
+}
+
+"os_testprint" "foo"
++++
+foo

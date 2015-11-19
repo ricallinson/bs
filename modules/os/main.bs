@@ -1,0 +1,11 @@
+func exec(bin, args) {
+    call(bin, args)
+}
+
+func testprint(str) {
+    bash("\"echo\" \"-ne\" \"$os_str\"")
+}
+
+func testprintln(str) {
+    bash("\"echo\" \"-ne\" \"$os_str\"")
+}
