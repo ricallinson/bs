@@ -147,10 +147,6 @@ Runs command from path through the bash shell.
 
 Put `rawStatement` into compiled code for Bash.
 
-### `exists(path)`
-
-Test existence of given path.
-
 ### `concat(str...)`
 
 Concatenates the given arguments and returns a string.

@@ -27,13 +27,6 @@ type Variable struct {
 
 func (this *Variable) String() (string, NodeI) {
 	var str string
-	// Are we in an exists function call, if so do something special.
-	// TODO: Move this block out to an object.
-	if this.Next().Next().Token() == EXISTS { // a->=->exists->(->"str"->)
-		param, _ := this.Next().Next().Next().Next().String()
-		str = "[ -e " + param + " ]\n" + this.Ident() + "=$((!$?))"
-		return str, this.Next().Next().Next().Next().Next()
-	}
 	// Get the full variable name.
 	ident, next := GetModuleIdent(this)
 	// Is this a function name?

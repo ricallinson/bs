@@ -1,26 +1,31 @@
 import("./modules/os")
-os.testprint("foo")
+e = os.exists("file.txt")
+print(e)
 ---
-function os_exec {
-local os_bin
-os_bin="$1"
-local os_args
-os_args="$2"
-"$os_bin" "$os_args"
+function os_exists {
+[ -e $1 ]
+ex=$((!$?))
+"echo" "-ne" "$ex"
+return
 }
 
-function os_testprint {
-local os_str
-os_str="$1"
-"echo" "-ne" "$os_str"
-}
-
-function os_testprintln {
-local os_str
-os_str="$1"
-"echo" "-ne" "$os_str"
-}
-
-"os_testprint" "foo"
+e=$("os_exists" "file.txt")
+"echo" "-ne" "$e"
 +++
-foo
+0
+===
+import("./modules/os")
+e = os.exists("./modules/os/main.bs")
+print(e)
+---
+function os_exists {
+[ -e $1 ]
+ex=$((!$?))
+"echo" "-ne" "$ex"
+return
+}
+
+e=$("os_exists" "./modules/os/main.bs")
+"echo" "-ne" "$e"
++++
+1
