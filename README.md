@@ -159,10 +159,6 @@ Concatenates the given arguments and returns a string.
 
 Returns an array of the given arguments.
 
-### `len(array)`
-
-Returns the length of the given array.
-
 ### `pack(array)`
 
 Converts an array so it can be passsed as an argument.

@@ -106,7 +106,7 @@ func init() {
 	keywords["for"] = FORIN
 	keywords["append"] = APPEND
 	keywords["import"] = IMPORT
-	keywords["len"] = LEN
+	// keywords["len"] = LEN
 	keywords["pack"] = PACK
 	keywords["unpack"] = UNPACK
 }

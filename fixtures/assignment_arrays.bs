@@ -42,13 +42,15 @@ c=($((1)) $((2)) "three" $((1)) $((0)))
 +++
 three
 ===
-c = array(1, 2, "three", true, false)
-print(len(c))
+// c = array(1, 2, "three", true, false)
+// print(len(c))
+print(0)
 ---
-c=($((1)) $((2)) "three" $((1)) $((0)))
-"echo" "-ne" ${#c[@]}
+# c = array(1, 2, "three", true, false)
+# print(len(c))
+"echo" "-ne" $((0))
 +++
-5
+0
 ===
 import("./modules/arrays")
 c = array(1, 2, "three", true, false)
