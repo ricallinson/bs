@@ -21,8 +21,8 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
-	"strings"
 	"path"
+	"strings"
 )
 
 // Parser represents a parser.
@@ -33,13 +33,20 @@ type Parser struct {
 		lit string // last read literal
 		n   int    // buffer size (max=1)
 	}
-	funcs map[string]bool
-	module []string
+	funcs  map[string]bool
+	module string
 }
 
 // NewParser returns a new instance of Parser.
 func NewParser(r io.Reader) *Parser {
 	return &Parser{s: NewScanner(r)}
+}
+
+func ParseFile(path string, module string, funcs map[string]bool) string {
+	p := NewParserFromFile(path)
+	p.module = module
+	p.funcs = funcs
+	return p.ParseToString()
 }
 
 // NewStringParser returns a new instance of Parser.
@@ -52,36 +59,37 @@ func NewParserFromFile(path string) *Parser {
 	return p
 }
 
+func ParseString(in string) string {
+	p := NewParserFromString(in)
+	return p.ParseToString()
+}
+
 // NewParserFromString returns a new instance of Parser.
 func NewParserFromString(in string) *Parser {
 	p := NewParser(strings.NewReader(in))
 	return p
 }
 
-func ParseString(in string) string {
-	p := NewParserFromString(in)
-	return p.ParseToString()
-}
-
-func ParseFile(path string, module... string) string {
-	p := NewParserFromFile(path)
-	p.Module(module...)
-	return p.ParseToString()
-}
-
-func ParseDir(dir string, module... string) string {
+func ParseDir(dir string, module string, funcs map[string]bool) string {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		panic(err)
 	}
-	module = append(module, path.Base(dir))
+	if funcs == nil {
+		funcs = map[string]bool{}
+	}
+	if len(module) > 0 {
+		module = module + "_" + path.Base(dir)
+	} else {
+		module = path.Base(dir)
+	}
 	var str string
 	for _, file := range files {
 		absPath := path.Join(dir, file.Name())
 		if file.IsDir() {
-			str += "\n" + ParseDir(absPath, module...)
-		} else {
-			str += ParseFile(absPath, module...)
+			str += "\n" + ParseDir(absPath, module, funcs)
+		} else if strings.HasSuffix(path.Ext(file.Name()), ".bs") {
+			str += ParseFile(absPath, module, funcs)
 		}
 	}
 	return str
@@ -103,15 +111,20 @@ func (this *Parser) ParseToString() string {
 	return str
 }
 
-func (this *Parser) Module(m... string) string {
-	if len(m) > 0 {
-		this.module = m
+func (this *Parser) Module() string {
+	return this.module
+}
+
+func (this *Parser) RegisterFunction(fn string) {
+	if ok, _ := this.funcs[fn]; ok {
+		panic("function '" + fn + "' already defined.")
 	}
-	module := strings.Join(this.module, "_")
-	if len(module) > 0 {
-		module = module + "_"
-	}
-	return module
+	this.funcs[fn] = true
+}
+
+func (this *Parser) IsFunction(fn string) bool {
+	ok, _ := this.funcs[fn]
+	return ok
 }
 
 // Parse parses a scripter string and returns a slice of statment AST objects.
@@ -145,10 +158,6 @@ func (this *Parser) parseStatement(prev NodeI) error {
 	switch tok {
 	case IDENT:
 		curr = &Variable{node}
-		// Check if the ident is a function, if so return a function name.
-		if ok, _ := this.funcs[lit]; ok {
-			curr = &FunctionName{node}
-		}
 	case NUMBER:
 		curr = &Integer{node}
 	case STRING:
@@ -183,10 +192,10 @@ func (this *Parser) parseStatement(prev NodeI) error {
 		// We create a node here to represent the block.
 		n := &Node{
 			parser: this,
-			ident: "",
-			token: LBRACE,
-			prev: prev,
-			next: nil,
+			ident:  "",
+			token:  LBRACE,
+			prev:   prev,
+			next:   nil,
 		}
 		block, _ := this.Parse(n)
 		curr = &Block{node, block}
@@ -198,13 +207,6 @@ func (this *Parser) parseStatement(prev NodeI) error {
 	curr.Token(tok)
 	curr.Prev(prev)
 	prev.Next(curr)
-
-	if prev.Token() == FUNCTION {
-		if ok, _ := this.funcs[curr.Ident()]; ok {
-			panic("function " + curr.Ident() + " already defined.")
-		}
-		this.funcs[curr.Ident()] = true
-	}
 
 	return this.parseStatement(curr)
 }

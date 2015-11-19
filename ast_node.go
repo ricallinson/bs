@@ -16,8 +16,12 @@ limitations under the License.
 
 package main
 
+import (
+// "fmt"
+)
+
 type NodeI interface {
-	Module() string
+	ModulePrefix() string
 	Ident(...string) string
 	Token(...Token) Token
 	Prev(...NodeI) NodeI
@@ -33,7 +37,10 @@ type Node struct {
 	next   NodeI
 }
 
-func (this *Node) Module() string {
+func (this *Node) ModulePrefix() string {
+	if len(this.parser.Module()) > 0 {
+		return this.parser.Module() + "_"
+	}
 	return this.parser.Module()
 }
 

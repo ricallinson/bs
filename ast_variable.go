@@ -36,6 +36,11 @@ func (this *Variable) String() (string, NodeI) {
 	}
 	// Get the full variable name.
 	ident, next := GetModuleIdent(this)
+	// Is this a function name?
+	if this.parser.IsFunction(ident) {
+		f := &FunctionName{this.Node}
+		return f.String()
+	}
 	// Is this variable a list with an index?
 	if this.Next().Token() == LSQUARE {
 		var args []string

@@ -122,9 +122,7 @@ func fibonacci(num) {
 println(fibonacci(8))
 ```
 
-### Modules
-
-__NOT IMPLEMENTED__
+### Import module
 
 ```javascript
 import("./path/to/module/foo")

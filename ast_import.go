@@ -16,19 +16,19 @@ limitations under the License.
 
 package main
 
-import(
-    "strings"
+import (
+	"strings"
 )
 
 type Import struct {
-    *Node
+	*Node
 }
 
 func (this *Import) String() (string, NodeI) {
-    var str string
-    path, node := GetArgs(this.Next()) // len->(
-    if len(path) == 1 {
-        str = ParseDir(strings.Trim(path[0], "\""))
-    }
-    return str, node
+	var str string
+	path, node := GetArgs(this.Next()) // len->(
+	if len(path) == 1 {
+		str = ParseDir(strings.Trim(path[0], "\""), this.Node.parser.module, this.Node.parser.funcs)
+	}
+	return str, node
 }

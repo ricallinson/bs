@@ -1,4 +1,4 @@
-foo = "bar"
+baz = "bar"
 func get() {
-    return foo
+    return baz
 }

@@ -1,25 +1,29 @@
 import("./fixtures/modules/foo")
-foo = "bar"
+baz = "bar"
 func get() {
-    return foo
+    return baz
 }
 print(get())
 print(foo.get())
 print(foo.sub.get())
 ---
-foo_foo="bar"
+foo_baz="bar"
 function foo_get {
-"echo" "-ne" "$foo_foo"
+"echo" "-ne" "$foo_baz"
 return
 }
-foo_sub_foo="bar"
+foo_sub_baz="bar"
 function foo_sub_get {
-"echo" "-ne" "$foo_foo_sub_foo"
+"echo" "-ne" "$foo_sub_baz"
 return
 }
-
-
-"echo" "-ne" "$foo_get"
-"echo" "-ne" "$foo_sub_get"
+baz="bar"
+function get {
+"echo" "-ne" "$baz"
+return
+}
+"echo" "-ne" $("get")
+"echo" "-ne" $("foo_get")
+"echo" "-ne" $("foo_sub_get")
 +++
 barbarbar

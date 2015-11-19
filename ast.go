@@ -81,7 +81,7 @@ const (
 	APPEND             // append
 	LEN                // len
 	LS                 // ls
-	IMPORT // import
+	IMPORT             // import
 )
 
 var keywords map[string]Token

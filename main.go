@@ -38,7 +38,7 @@ func main() {
 		return
 	}
 	source := flag.Arg(0)
-	s := ParseFile(source)
+	s := ParseFile(source, "", nil)
 	if *script {
 		fmt.Print(s)
 		return

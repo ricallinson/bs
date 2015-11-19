@@ -17,8 +17,8 @@ limitations under the License.
 package main
 
 import (
-	// "fmt"
-	// "strings"
+// "fmt"
+// "strings"
 )
 
 // Is the given node and arithmetic operator.
@@ -66,12 +66,13 @@ func GetModuleIdent(n NodeI) (string, NodeI) {
 	for n.Token() == IDENT || n.Token() == DOT {
 		if n.Token() == IDENT {
 			variable += n.Ident()
-		} else if n.Token() == DOT {
+		} else {
 			variable += "_"
 		}
 		n = n.Next()
 	}
-	return n.Module() + variable, n
+	// fmt.Println(n.ModulePrefix() + variable)
+	return n.ModulePrefix() + variable, n
 }
 
 // Get the function arguments by consuming all following nodes
