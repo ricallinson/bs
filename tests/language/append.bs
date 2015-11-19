@@ -1,0 +1,10 @@
+list = array(1, 2, 3)
+append(list, 4, 5)
+print(list)
+---
+list=($((1)) $((2)) $((3)))
+list+=($((4)))
+list+=($((5)))
+"echo" "-ne" "$list"
++++
+1

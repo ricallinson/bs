@@ -1,0 +1,5 @@
+import("./modules/arrays")
+c = array(1, 2, "three", true, false)
+print(arrays.length(pack(c)))
+---
+5

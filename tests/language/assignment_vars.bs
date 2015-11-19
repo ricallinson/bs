@@ -1,0 +1,35 @@
+b = "foo"
+a = b
+print(a)
+---
+b="foo"
+a="$b"
+"echo" "-ne" "$a"
++++
+foo
+===
+b = "foo"
+c = "bar"
+a = concat(b, c)
+print(a)
+---
+b="foo"
+c="bar"
+a="$b""$c"
+"echo" "-ne" "$a"
++++
+foobar
+===
+b = 1
+c = 2
+d = 3
+a = b + c + d
+print(a)
+---
+b=$((1))
+c=$((2))
+d=$((3))
+a=$(($b+$c+$d))
+"echo" "-ne" "$a"
++++
+6

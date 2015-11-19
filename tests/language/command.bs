@@ -1,0 +1,42 @@
+println("foo")
+---
+"echo" "-e" "foo"
++++
+foo
+
+===
+print("foo")
+---
+"echo" "-ne" "foo"
++++
+foo
+===
+call("echo", "foobar")
+---
+"echo" "foobar"
++++
+foobar
+
+===
+a = call("echo", "foobar")
+print(a)
+---
+a=$("echo" "foobar")
+"echo" "-ne" "$a"
++++
+foobar
+===
+a = call("echo", "foobar")
+print(a)
+---
+a=$("echo" "foobar")
+"echo" "-ne" "$a"
++++
+foobar
+===
+bash("echo foobar")
+---
+echo foobar
++++
+foobar
+

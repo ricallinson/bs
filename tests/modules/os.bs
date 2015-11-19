@@ -1,0 +1,11 @@
+import("./modules/os")
+e = os.exists("file.txt")
+print(e)
+---
+0
+===
+import("./modules/os")
+e = os.exists("./modules/os/main.bs")
+print(e)
+---
+1
