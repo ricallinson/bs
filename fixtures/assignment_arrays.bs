@@ -49,3 +49,21 @@ c=($((1)) $((2)) "three" $((1)) $((0)))
 "echo" "-ne" ${#c[@]}
 +++
 5
+===
+import("./modules/arrays")
+c = array(1, 2, "three", true, false)
+print(arrays.length(pack(c)))
+---
+function arrays_length {
+local arrays_a
+local arrays_arr
+arrays_arr="$1"
+arrays_a=($@)
+"echo" "-ne" ${#arrays_a[@]}
+return
+}
+
+c=($((1)) $((2)) "three" $((1)) $((0)))
+"echo" "-ne" $("arrays_length" ${c[@]})
++++
+5

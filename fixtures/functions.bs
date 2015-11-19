@@ -1,4 +1,4 @@
-func foo () {
+func foo() {
     return 1
 }
 print(foo())

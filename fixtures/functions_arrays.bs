@@ -1,0 +1,19 @@
+func foo(arr) {
+    a = unpack(arr)
+    return len(a)
+}
+a = array("zero", 1, "2", "three", 4, "5")
+print(foo(pack(a)))
+---
+function foo {
+local a
+local arr
+arr="$1"
+a=($@)
+"echo" "-ne" ${#a[@]}
+return
+}
+a=("zero" $((1)) "2" "three" $((4)) "5")
+"echo" "-ne" $("foo" ${a[@]})
++++
+6

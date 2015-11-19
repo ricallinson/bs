@@ -1,0 +1,4 @@
+func length(arr) {
+    a = unpack(arr)
+    return bash("${#arrays_a[@]}")
+}
