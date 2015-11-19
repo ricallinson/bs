@@ -163,9 +163,17 @@ Returns an array of the given arguments.
 
 Converts an array so it can be passsed as an argument.
 
+    arr = array(1, 2, 3)
+    foo(pack(arr))
+
 ### `unpack(array_argument)`
 
 Returns an array from a function argument if the value was an array.
+
+    func foo(arr) {
+        a = unpack(arr)
+        return a[2]
+    }
 
 ## Inspiration
 
