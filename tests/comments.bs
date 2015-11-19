@@ -1,7 +1,0 @@
-// This is a "real" comment about 'the' world.
-print("foo")
----
-# This is a "real" comment about 'the' world.
-"echo" "-ne" "foo"
-+++
-foo
