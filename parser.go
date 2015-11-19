@@ -184,6 +184,8 @@ func (this *Parser) parseStatement(prev NodeI) error {
 		curr = &Append{node}
 	case IMPORT:
 		curr = &Import{node}
+	case LEN:
+		curr = &Len{node}
 	case LBRACE:
 		// We create a node here to represent the block.
 		n := &Node{

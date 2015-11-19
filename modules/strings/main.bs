@@ -1,0 +1,3 @@
+func length(str) {
+    return bash("${#strings_str}")
+}

@@ -101,7 +101,7 @@ func (this Block) GetArguments(n NodeI) string {
 			// local v
 			// v=$i
 			argsList[args.Ident()] = true
-			strArgs += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", args.Ident(), args.Ident(), i)
+			strArgs += fmt.Sprintf("\nlocal %s\n%s=\"$%d\"", this.ModulePrefix()+args.Ident(), this.ModulePrefix()+args.Ident(), i)
 			i++
 		}
 		args = args.Next()
@@ -112,7 +112,7 @@ func (this Block) GetArguments(n NodeI) string {
 		if local.Prev().Token() == EOL && local.Token() == IDENT {
 			if ok := argsList[local.Ident()]; ok == false {
 				// local v
-				strLocal += "\nlocal " + local.Ident()
+				strLocal += "\nlocal " + this.ModulePrefix() + local.Ident()
 			}
 		}
 		_, local = local.String()
