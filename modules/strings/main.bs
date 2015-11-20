@@ -26,3 +26,20 @@ func contains(str, char) {
     }
     return false
 }
+
+func count(str, char) {
+    a = array()
+    // This converts the string into an array.
+    bash("while IFS= read -rn1 c; do")
+    bash("strings_a+=(\"$c\")")
+    bash("done <<< \"$strings_str\"")
+    // Now we loop over the array to see if the char matches.
+    i = 0
+    for c in a {
+        if c == char {
+            i = i + 1
+        }
+        
+    }
+    return i
+}

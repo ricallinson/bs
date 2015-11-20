@@ -37,3 +37,13 @@ import("./modules/strings")
 print(strings.contains("abc", "e"))
 ---
 0
+===
+import("./modules/strings")
+print(strings.count("abc", "b"))
+---
+1
+===
+import("./modules/strings")
+print(strings.count("abcabcabc", "b"))
+---
+3
