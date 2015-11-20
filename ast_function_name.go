@@ -34,16 +34,16 @@ func (this *FunctionName) String() (string, NodeI) {
 	// Otherwise the function call is a value and it must be wrapped in '$("")'.
 	str := "$(\"" + ident + "\""
 	var args []string
-	args, next = GetArgs(next.Next()) // foo->(->
+	args, next = GetArgs(next) // foo->(->
 	if len(args) > 0 {
 		str += " "
 	}
-	str += strings.Join(args, " ")
-	// If the function call is part of some arithmetic then is must be wrapped again in '$(())'.
+	str += strings.Join(args, " ") + ")"
+	// If the function call is part of some arithmetic then it must be wrapped again in '$(())'.
 	if IsArithmetic(this.Prev()) == false && IsArithmetic(next.Next()) {
 		str = "$((" + str
 	} else if IsArithmetic(this.Prev()) && IsArithmetic(next.Next()) == false {
 		str += "))"
 	}
-	return str + ")", next
+	return str, next
 }

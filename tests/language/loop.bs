@@ -46,3 +46,62 @@ for i in "${list[@]}"; do
 done
 +++
 one23.3
+===
+n = 0
+while n < (100 - 40) {
+    n = n + 1
+}
+print(n)
+---
+n=$((0))
+while [ $(($n < $((100 - 40)))) == 1 ]; do
+n=$(($n+1))
+done
+
+"echo" "-ne" "$n"
++++
+60
+===
+func foo() {
+    return 60
+}
+n = 0
+while n < foo() {
+    n = n + 1
+}
+print(n)
+---
+function foo {
+"echo" "-ne" $((60))
+return
+}
+n=$((0))
+while [ $(($n < $("foo"))) == 1 ]; do
+n=$(($n+1))
+done
+
+"echo" "-ne" "$n"
++++
+60
+===
+func foo() {
+    return 60
+}
+n = 0
+while n < (foo() + foo()) {
+    n = n + 1
+}
+print(n)
+---
+function foo {
+"echo" "-ne" $((60))
+return
+}
+n=$((0))
+while [ $(($n < $(($("foo") + $("foo"))))) == 1 ]; do
+n=$(($n+1))
+done
+
+"echo" "-ne" "$n"
++++
+120

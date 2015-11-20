@@ -31,5 +31,5 @@ func (this While) String() (string, NodeI) {
 	if WasArithmetic(node.Prev()) || CountVariables(node.Prev()) == 1 {
 		check = " == 1"
 	}
-	return "while [ " + str + check + " ]; do", node
+	return "while [ " + str + BalanceParen(str) + check + " ]; do", node
 }

@@ -17,8 +17,8 @@ limitations under the License.
 package main
 
 import (
-// "fmt"
-// "strings"
+	// "fmt"
+	"strings"
 )
 
 // Is the given node and arithmetic operator.
@@ -43,6 +43,23 @@ func WasArithmetic(n NodeI) bool {
 		}
 	}
 	return false
+}
+
+// Examines the given string and returns a new sting of missing right paren's.
+func BalanceParen(s string) string {
+	var count int
+	for _, c := range s {
+		switch c {
+		case '(':
+			count++
+		case ')':
+			count--
+		}
+	}
+	if count < 1 {
+		return ""
+	}
+	return strings.Repeat(")", count)
 }
 
 // Count the number of variables that have been used in the statement prior to the given node.
