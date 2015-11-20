@@ -156,7 +156,7 @@ Returns an array of the given arguments.
 
 ### `pack(array)`
 
-Converts an array so it can be passsed as an argument.
+Converts an array into a string so it can be passed as a function argument.
 
 ```javascript
 arr = array(1, 2, 3)
@@ -165,7 +165,7 @@ foo(pack(arr))
 
 ### `unpack(array_argument)`
 
-Returns an array from a function argument if the value was an array.
+Returns an array from a string if the value was a packed array.
 
 ```javascript
 func foo(arr) {
