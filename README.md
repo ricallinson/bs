@@ -174,6 +174,15 @@ func foo(arr) {
 }
 ```
 
+## Testing
+
+    go test
+
+## Code Coverage
+
+    go test -coverprofile=coverage.out; go tool cover -html=coverage.out -o=coverage.html
+    open coverage.html
+
 ## Inspiration
 
 This project was inspired by [Batsh](https://github.com/BYVoid/Batsh).
