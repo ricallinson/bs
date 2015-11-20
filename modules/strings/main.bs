@@ -1,3 +1,20 @@
 func length(str) {
-    return bash("${#strings_str}")
+    return bash("${#1}")
+}
+
+func index(str, sep) {
+    a = array()
+    // This converts the string into an array.
+    bash("while IFS= read -rn1 c; do")
+    bash("strings_a+=(\"$c\")")
+    bash("done <<< \"$strings_str\"")
+    // New we loop over the array.
+    i = 0
+    for c in a {
+        if c == sep {
+            return i
+        }
+        i = i + 1
+    }
+    return -1
 }

@@ -13,17 +13,3 @@ a="foo""bar"
 "echo" "-ne" "$a"
 +++
 foobar
-===
-import("./modules/strings")
-print(strings.length("abc"))
----
-function strings_length {
-local strings_str
-strings_str="$1"
-"echo" "-ne" ${#strings_str}
-return
-}
-
-"echo" "-ne" $("strings_length" "abc")
-+++
-3

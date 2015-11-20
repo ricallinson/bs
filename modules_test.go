@@ -43,8 +43,12 @@ func TestModules(t *testing.T) {
 						s := ParseString(bs)
 						o := ExecuteScript(s)
 						if len(strings.TrimSpace(op)) > 0 {
+							m := op[1 : len(op)-1]
 							// Remove the new line at the start and end of the output test.
-							AssertEqual(o, op[1:len(op)-1])
+							AssertEqual(o, m)
+							if o != m {
+								AssertEqual(s, "Script dump")
+							}
 						} else {
 							AssertEqual("Missing execution test.", "")
 						}

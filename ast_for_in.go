@@ -23,5 +23,5 @@ type ForIn struct {
 func (this ForIn) String() (string, NodeI) {
 	// Get the list.
 	l := this.Next().Next().Next().Ident() // for->var->in->
-	return "for " + this.Next().Ident() + " in ${" + l + "[@]}; do", this.Next().Next().Next().Next()
+	return "for " + this.ModulePrefix() + this.Next().Ident() + " in \"${" + this.ModulePrefix() + l + "[@]}\"; do", this.Next().Next().Next().Next()
 }

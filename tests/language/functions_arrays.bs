@@ -11,7 +11,7 @@ local arrays_a
 local arrays_arr
 arrays_arr="$1"
 arrays_a=($@)
-"echo" "-ne" ${#arrays_a[@]}
+"echo" "-ne" "${#arrays_a[@]}"
 return
 }
 
@@ -20,10 +20,10 @@ local a
 local arr
 arr="$1"
 a=($@)
-"echo" "-ne" $("arrays_length" ${a[@]})
+"echo" "-ne" $("arrays_length" "${a[@]}")
 return
 }
 a=("zero" $((1)) "2" "three" $((4)) "5")
-"echo" "-ne" $("foo" ${a[@]})
+"echo" "-ne" $("foo" "${a[@]}")
 +++
 6

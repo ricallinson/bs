@@ -19,5 +19,5 @@ type Pack struct {
 
 func (this *Pack) String() (string, NodeI) {
 	ident := this.Next().Next().Ident() // pack->(->
-	return "${" + ident + "[@]}", this.Next().Next().Next()
+	return "\"${" + ident + "[@]}\"", this.Next().Next().Next()
 }

@@ -22,7 +22,7 @@ str=""
 list=("a" "b" "c")
 while [ $(($count > 0)) == 1 ]; do
 if [ $(($count / 2)) == 1 ]; then
-for i in ${list[@]}; do
+for i in "${list[@]}"; do
 str="$str""$i"" "
 done
 

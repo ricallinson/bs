@@ -1,0 +1,29 @@
+import("./modules/strings")
+print(strings.length("abc"))
+---
+3
+===
+import("./modules/strings")
+print(strings.length("abc abc"))
+---
+7
+===
+import("./modules/strings")
+print(strings.index("abc", "x"))
+---
+-1
+===
+import("./modules/strings")
+print(strings.index("abc", "c"))
+---
+2
+===
+import("./modules/strings")
+print(strings.index("ab c", "c"))
+---
+3
+===
+import("./modules/strings")
+print(strings.index("The fox, who jump, was in the grass!", ","))
+---
+7
