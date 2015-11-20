@@ -49,3 +49,41 @@ fi
 fi
 +++
 Yes
+===
+func foo() {
+    return true
+}
+a = true;
+if a == foo() {
+    print("Yes")
+}
+---
+function foo {
+"echo" "-ne" $((1))
+return
+}
+a=$((1))
+if [ "$a" == $("foo") ]; then
+"echo" "-ne" "Yes"
+fi
++++
+Yes
+===
+func foo() {
+    return 10
+}
+a = 9
+if a < (foo() + foo()) {
+    print("Yes")
+}
+---
+function foo {
+"echo" "-ne" $((10))
+return
+}
+a=$((9))
+if [ $(($a < $(($("foo") + $("foo"))))) == 1 ]; then
+"echo" "-ne" "Yes"
+fi
++++
+Yes

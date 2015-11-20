@@ -10,7 +10,7 @@ Bash Scripting is a simple programming language that compiles to Bash.
 
 * More tests
 * Syntax checking
-* Support for expressions in `for in` statements.
+* Support for expressions in `if`, `while` and `for in` statements.
 * Pretty printing output script
 
 ## Use
