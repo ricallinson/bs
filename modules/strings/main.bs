@@ -39,7 +39,36 @@ func count(str, char) {
         if c == char {
             i = i + 1
         }
-        
     }
     return i
+}
+
+func hasPrefix(str, prefix) {
+    a = array()
+    // This converts the string into an array.
+    bash("while IFS= read -rn1 c; do")
+    bash("strings_a+=(\"$c\")")
+    bash("done <<< \"$strings_str\"")
+    p = array()
+    // This converts the string into an array.
+    bash("while IFS= read -rn1 c; do")
+    bash("strings_p+=(\"$c\")")
+    bash("done <<< \"$strings_prefix\"")
+    // Now we loop over the array to see if the prefix matches.
+    i = 0
+    s = length(prefix)
+    for c in a {
+        if i == s {
+            return true
+        }
+        if c != p[i] {
+            return false
+        }
+        i = i + 1
+    }
+    return false
+}
+
+func hasSuffix(str, suffix) {
+    
 }

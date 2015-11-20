@@ -97,6 +97,8 @@ func (this *Node) String() (string, NodeI) {
 		str = ">="
 	case EEQ:
 		str = "=="
+	case NEQ:
+		str = "!="
 	case TRUE:
 		str = "$((1))"
 	case FALSE:

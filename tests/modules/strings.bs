@@ -47,3 +47,13 @@ import("./modules/strings")
 print(strings.count("abcabcabc", "b"))
 ---
 3
+===
+import("./modules/strings")
+print(strings.hasPrefix("abcdefg", "abc"))
+---
+1
+===
+import("./modules/strings")
+print(strings.hasPrefix("abcdefg", "bca"))
+---
+0
