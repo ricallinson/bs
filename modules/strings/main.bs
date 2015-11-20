@@ -2,19 +2,27 @@ func length(str) {
     return bash("${#1}")
 }
 
-func index(str, sep) {
+func index(str, char) {
     a = array()
     // This converts the string into an array.
     bash("while IFS= read -rn1 c; do")
     bash("strings_a+=(\"$c\")")
     bash("done <<< \"$strings_str\"")
-    // New we loop over the array.
+    // Now we loop over the array to see if the char matches.
     i = 0
     for c in a {
-        if c == sep {
+        if c == char {
             return i
         }
         i = i + 1
     }
     return -1
+}
+
+func contains(str, char) {
+    i = index(str, char)
+    if i >= 0 {
+        return true
+    }
+    return false
 }

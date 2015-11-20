@@ -27,3 +27,13 @@ import("./modules/strings")
 print(strings.index("The fox, who jump, was in the grass!", ","))
 ---
 7
+===
+import("./modules/strings")
+print(strings.contains("abc", "b"))
+---
+1
+===
+import("./modules/strings")
+print(strings.contains("abc", "e"))
+---
+0
